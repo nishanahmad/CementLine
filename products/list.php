@@ -5,14 +5,9 @@ if(isset($_SESSION["user_name"]))
 {
 echo "LOGGED USER : ".$_SESSION["user_name"] ;	
 	
-require 'connect.php';
+require '../connect.php';
 
-		$result = mysqli_query($con,"SELECT cement_id,cement_name FROM cement_details order by cement_name asc  ");
-			
-		if ( false===$result ) 
-		{
-			printf("error: %s\n", mysqli_error($con));
-		}
+$result = mysqli_query($con,"SELECT id,name FROM products ORDER BY name") or die(mysqli_error($con));				 	 
 
 ?>
 
@@ -42,17 +37,16 @@ $('#datatables').dataTable({
 <body>
 <div style="width:40%;margin: 0 auto;">
 <div align="center" style="padding-bottom:5px;">
-<a href="index.php" class="link"><img alt='home' title='home' src='images/home.png' width='60px' height='60px'/> </a> &nbsp;&nbsp;&nbsp;
-<a href="cementInsertPage.php" class="link"><img alt='Add' title='Add New' src='images/addNew.png' width='60px' height='60px'/></a>
+<a href="../index.php" class="link"><img alt='home' title='home' src='../images/home.png' width='60px' height='60px'/> </a> &nbsp;&nbsp;&nbsp;
+<a href="new.php" class="link"><img alt='Add' title='Add New' src='../images/addNew.png' width='60px' height='60px'/></a>
 </div>
 <br>
 
 <table id="datatables" class="display" width="100%">
  <thead>
 <tr>
-<th>EDIT</th>
-<th>CEMENT NAME</th>
-<th>DELETE</th>
+<th>Edit</th>
+<th>Product Name</th>
 </tr>
 </thead>
  <tbody>
@@ -61,11 +55,8 @@ while($row = mysqli_fetch_array($result,MYSQLI_ASSOC))
 {
 ?>
 <tr>
-<td><a href="cementEditPage.php?cement_id=<?php echo $row["cement_id"]; ?>" class="link"><img alt='Edit' title='Edit' src='images/edit.png' width='20px' height='20px' hspace='10' /></a></td>
-<td><?php echo $row['cement_name']?></td>
-<td><a href="cementDelete.php?cement_id=<?php echo $row["cement_id"]; ?>"  class="link" onclick="return confirm('Are you sure you want to permanently delete this CEMENT ?')">
-		<img alt='Delete' title='Delete' src='images/delete.png' width='25px' height='25px'hspace='10' /></a></td>
-
+	<td><a href="edit.php?id=<?php echo $row["id"]; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>
+	<td><?php echo $row['name']?></td>
 </tr>
 <?php
 }

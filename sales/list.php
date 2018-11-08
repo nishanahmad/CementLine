@@ -58,11 +58,11 @@ if(isset($_SESSION["user_name"]))
 		  }
 		}
 	</style>
-		<link rel="stylesheet" type="text/css" href="css/glow_box.css">
-		<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
+		<link rel="stylesheet" type="text/css" href="../css/glow_box.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
 		
-		<script type="text/javascript" language="javascript" src="js/jquery.js"></script>
-		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.js"></script>
+		<script type="text/javascript" language="javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" language="javascript" src="../js/jquery.dataTables.js"></script>
 		<script type="text/javascript" language="javascript">
 			$(document).ready(function() {
 				var dataTable = $('#employee-grid').DataTable( {
@@ -74,7 +74,7 @@ if(isset($_SESSION["user_name"]))
 					"bJQueryUI":true,
 					"iDisplayLength": 2000,					
 					"ajax":{
-						url :"library/list_all_sales.php", // json datasource
+						url :"list_server.php", // json datasource
 						type: "post",  // method  , by default get
 						error: function(){  // error handling
 							$(".employee-grid-error").html("");
@@ -128,8 +128,8 @@ if(isset($_SESSION["user_name"]))
 	</head>
 	<body>
 		<div align="center">
-					<a href="index.php" class="link"><img alt='home' title='home' src='images/home.png' width='60px' height='60px'/> </a> &nbsp;&nbsp;&nbsp;
-					<a href="entryPage.php" class="link"><img alt='Add' title='Add New' src='images/addnew.png' width='60px' height='60px'/></a>
+					<a href="../index.php" class="link"><img alt='home' title='home' src='../images/home.png' width='60px' height='60px'/> </a> &nbsp;&nbsp;&nbsp;
+					<a href="new.php" class="link"><img alt='Add' title='Add New' src='../images/addnew.png' width='60px' height='60px'/></a>
 		
 		</div>
 <div align="center" class="gradient">
@@ -161,15 +161,14 @@ if(isset($_SESSION["user_name"]))
 					<thead>
 						<tr>
 							<th>Id</th>
-							<th>Date</th>
+							<th style="width:80px;">Date</th>
 							<th>AR</th>
 							<th>Truck</th>
-							<th>CEMENT</th>
+							<th>Product</th>
 							<th>Qty</th>
 							<th>BILL NO</th>							
 							<th>CSTMR NAME</th>							
-							<th>REMARKS</th>							
-							<th>DELETE</th>							
+							<th>Remarks</th>							
 						</tr>
 					</thead>
 			</table>
@@ -179,7 +178,7 @@ if(isset($_SESSION["user_name"]))
 <?php
 }
 else
-	header("Location:loginPage.php");
+	header("Location:../index.php");
 
 ?>
 	

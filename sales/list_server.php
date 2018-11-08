@@ -4,15 +4,26 @@ if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
 
+	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
+	foreach($clients as $client)
+	{
+		$clientMap[$client['id']] = $client['name'];
+	}	
+
+	$products = mysqli_query($con,"SELECT id,name FROM products ORDER BY name ASC");	
+	foreach($products as $product)
+	{
+		$productMap[$product['id']] = $product['name'];
+	}	
+
 	$requestData= $_REQUEST;
 
 	$columns = array( 
-	// datatable column index  => database column name
-		0 =>'sales_id', 
-		1 =>'entry_date', 
-		2 =>'ar', 
+		0 =>'id', 
+		1 =>'date', 
+		2 =>'client', 
 		3 => 'truck_no',
-		4=> 'cement',
+		4=> 'product',
 		5=> 'qty',
 		6=> 'bill_no',
 		7=> 'customer_name',
@@ -22,26 +33,23 @@ if(isset($_SESSION["user_name"]))
 
 	// getting total number records without any search
 
-		$sql = "SELECT sales_id,entry_date,ar,truck_no,cement,qty,bill_no,customer_name,customer_phone,remarks";
-		$sql.=" FROM sales_entry ORDER BY entry_date DESC";
-		$query=mysqli_query($con, $sql) or die("employee-grid-data.php: get nas");
-		$totalData = mysqli_num_rows($query);
-		$totalFiltered = $totalData;  // when there is no search parameter then total number rows = total number filtered rows.
+	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks";
+	$sql.=" FROM sales ORDER BY date DESC";
+	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 27');	
+	$totalData = mysqli_num_rows($query);
+	$totalFiltered = $totalData;  // when there is no search parameter then total number rows = total number filtered rows.
 
 
-		$sql = "SELECT sales_id,entry_date,ar,truck_no,cement,qty,bill_no,customer_name,customer_phone,remarks";
-		$sql.=" FROM sales_entry where 1=1  ";
+	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks";
+	$sql.=" FROM sales where 1=1  ";
 
-
-
-	// getting records as per search parameters
 	if( !empty($requestData['columns'][0]['search']['value']) )
-	{  //ar
-		$sql.=" AND sales_id LIKE '".$requestData['columns'][0]['search']['value']."%' ";
+	{  
+		$sql.=" AND id LIKE '".$requestData['columns'][0]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][1]['search']['value']) )
-	{  //entry_date  
+	{ 
 
 		$pattern_day1 = '/^[0-9]{2}$/';
 		$pattern_day2 = '/^[0-9]{2}-$/';
@@ -61,7 +69,7 @@ if(isset($_SESSION["user_name"]))
 			$day_array[0] = $requestData['columns'][1]['search']['value'][0];
 			$day_array[1] = $requestData['columns'][1]['search']['value'][1];
 			$day = implode ('', $day_array);
-			$sql.=" AND entry_date LIKE '%".$day."' ";	
+			$sql.=" AND date LIKE '%".$day."' ";	
 		}
 
 		if(preg_match($pattern_day_month1, $requestData['columns'][0]['search']['value']) || preg_match($pattern_day_month2, $requestData['columns'][0]['search']['value']) || preg_match($pattern_day_month3, $requestData['columns'][0]['search']['value']) || preg_match($pattern_day_month4, $requestData['columns'][0]['search']['value']) || preg_match($pattern_day_month5, $requestData['columns'][0]['search']['value']))
@@ -73,7 +81,7 @@ if(isset($_SESSION["user_name"]))
 			$month_day_array[4] = $requestData['columns'][1]['search']['value'][1];
 			
 			$month_day = implode ('', $month_day_array);
-			$sql.=" AND entry_date LIKE '%".$month_day."' ";	
+			$sql.=" AND date LIKE '%".$month_day."' ";	
 
 		}
 		
@@ -81,13 +89,13 @@ if(isset($_SESSION["user_name"]))
 		{
 			$date = date_parse($requestData['columns'][1]['search']['value']);
 			$month = $date['month'];
-			$sql.=" AND month(entry_date) = '".$month."' ";	
+			$sql.=" AND month(date) = '".$month."' ";	
 		}	
 
 		if(	preg_match($full_pattern, $requestData['columns'][1]['search']['value'])	)
 		{
 			$full_date = date('Y-m-d', strtotime($requestData['columns'][1]['search']['value']));
-			$sql.=" AND entry_date LIKE '".$full_date."' ";	
+			$sql.=" AND date LIKE '".$full_date."' ";	
 		}
 		
 		else if(strcmp($requestData['columns'][1]['search']['value'] , 'to') != 0)	
@@ -95,19 +103,14 @@ if(isset($_SESSION["user_name"]))
 			$dates = explode( 'to', $requestData['columns'][1]['search']['value'] );
 			$from = date('Y-m-d', strtotime($dates[0]));
 			$to = date('Y-m-d', strtotime($dates[1]));
-			$sql.=" AND entry_date BETWEEN '".$from."' AND  '".$to."' ";	
-			
-	/*		$fp = fopen('from.json', 'w');
-			fwrite($fp, json_encode($from));
-			fclose($fp);		
-	*/		
+			$sql.=" AND date BETWEEN '".$from."' AND  '".$to."' ";	
 		}	
 		
 	}
 
 	if( !empty($requestData['columns'][2]['search']['value']) )
 	{  //ar
-		$sql.=" AND ar LIKE '".$requestData['columns'][2]['search']['value']."%' ";
+		$sql.=" AND client LIKE '".$requestData['columns'][2]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][3]['search']['value']) )
@@ -117,7 +120,7 @@ if(isset($_SESSION["user_name"]))
 
 	if( !empty($requestData['columns'][4]['search']['value']) )
 	{ 
-		$sql.=" AND cement LIKE '".$requestData['columns'][4]['search']['value']."%' ";
+		$sql.=" AND product LIKE '".$requestData['columns'][4]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][5]['search']['value']) )
@@ -145,12 +148,12 @@ if(isset($_SESSION["user_name"]))
 		$sql.=" AND remarks LIKE '".$requestData['columns'][9]['search']['value']."%' ";
 	}
 
-	$query=mysqli_query($con, $sql) or die("employee-grid-data.php: get employees");
+	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 148');	
 	$totalFiltered = mysqli_num_rows($query); // when there is a search parameter then we have to modify total number filtered rows as per search result.
 		
 	$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']." LIMIT ".$requestData['start']." ,".$requestData['length']."   ";  // adding length
 
-	$query=mysqli_query($con, $sql) or die("employee-grid-data.php: get employees");
+	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 153 : '.$sql);	
 
 	$data = array();
 	$itemarray = array();
@@ -158,23 +161,23 @@ if(isset($_SESSION["user_name"]))
 	while( $row=mysqli_fetch_array($query) ) {  // preparing an array
 		$nestedData=array(); 
 
-		$nestedData[] = '<a href="editSales.php?clicked_from=all_sales&sales_id='.$row["sales_id"].'">'.$row["sales_id"].'</a>';
-		$nestedData[] = date('d-m-Y',strtotime($row['entry_date']));
-		$nestedData[] = $row['ar'];
+		$nestedData[] = '<a href="edit.php?clicked_from=all_sales&id='.$row["id"].'">'.$row["id"].'</a>';
+		$nestedData[] = date('d-m-Y',strtotime($row['date']));
+		$nestedData[] = $clientMap[$row['client']];
 		$nestedData[] = $row["truck_no"];
-		$nestedData[] = $row["cement"];
+		$nestedData[] = $productMap[$row['product']];
 		$nestedData[] = $row["qty"];
 			$total = $total + $row["qty"];
 		$nestedData[] = $row["bill_no"];
 		$nestedData[] = $row["customer_name"];
 		$nestedData[] = $row["remarks"];
-		$nestedData[] = '<a href="delete_sales.php?clicked_from=all_sales&sales_id='.$row["sales_id"].'" >Delete</a>';
 		$data[] = $nestedData;
 		
-		if(!array_key_exists($row["cement"],$itemarray))
-			$itemarray[$row["cement"]] = $row["qty"];
+		$product = $productMap[$row['product']];
+		if(!array_key_exists($product,$itemarray))
+			$itemarray[$product] = $row["qty"];
 		else
-			$itemarray[$row["cement"]] = $itemarray[$row["cement"]] + $row["qty"];
+			$itemarray[$product] = $itemarray[$product] + $row["qty"];
 	}
 
 	// Split the array for display purpose
@@ -197,6 +200,4 @@ if(isset($_SESSION["user_name"]))
 	echo json_encode($json_data);  // send data as json format
 
 }
-else
-	header("Location:loginPage.php");
 ?>

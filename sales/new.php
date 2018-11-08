@@ -2,7 +2,9 @@
 session_start();
 if(isset($_SESSION["user_name"]))
 {
-	require 'connect.php';
+	require '../connect.php';
+	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");
+	$products= mysqli_query($con,"SELECT id,name FROM products ORDER BY name ASC");
 ?>
 
 <html>
@@ -22,18 +24,18 @@ $( "#datepicker" ).datepicker(pickerOpts);
 
 });
 </script>
-<link rel="stylesheet" type="text/css" href="css/newEdit.css" />
+<link rel="stylesheet" type="text/css" href="../css/newEdit.css" />
 </head>
 <body>
 <?php
 echo "LOGGED USER : ".$_SESSION["user_name"] ;
 ?>
-<form name="frm" method="post" action="insertSales.php" onsubmit="return validateForm()">
+<form name="frm" method="post" action="insert.php" onsubmit="return validateForm()">
 <div style="width:100%;">
 <div align="center" style="padding-bottom:5px;">
-<a href="index.php" class="link"><img alt='home' title='home' src='images/homeBrown.png' width='50px' height='50px'/> </a> &nbsp;&nbsp;&nbsp;
-<a href="list_today_sales.php?ar=all" class="link">
-<img alt='List' title='List Sales' src='images/list_icon.jpg' width='50px' height='50px'/></a>
+<a href="../index.php" class="link"><img alt='home' title='home' src='../images/homeBrown.png' width='50px' height='50px'/> </a> &nbsp;&nbsp;&nbsp;
+<a href="todayList.php?client=all" class="link">
+	<img alt='List' title='List Sales' src='../images/list_icon.jpg' width='50px' height='50px'/></a>
 </div>
 <br>
 <table border="0" cellpadding="15" cellspacing="0" width="80%" align="center" style="float:center" class="tblSaveForm">
@@ -50,15 +52,13 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 </tr>
 
 <td><label>AR</label></td>
-<td><select required name="ar" class="txtField">
-    <option value = "">---Select---</option>
-    <?php
-    $queryusers = "SELECT ar_name FROM ar_details ORDER BY ar_name";
-    $db = mysqli_query($con,$queryusers);
-    while ( $d=mysqli_fetch_assoc($db)) {
-     echo "<option value='".$d['ar_name']."'>".$d['ar_name']."</option>";    }
-    ?>
-      </select>
+<td><select required name="client" class="txtField">
+		<option value = "">---Select---</option>																			<?php
+		foreach($clients as $client) 
+		{																													?>
+			<option value="<?php echo $client['id'];?>"><?php echo $client['name'];?></option>										<?php	
+		}																													?>
+	</select>
 </td>
 
 <td><label>Bill No</label></td>
@@ -73,16 +73,14 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 <td><input type="text" name="customerName" class="txtField"></td>
 </tr>
 
-<td><label>CEMENT</label></td>
-<td><select required name="cement" class="txtField">
-    <option value = "">---Select---</option>
-    <?php
-    $queryusers = "SELECT `cement_name` FROM `cement_details` ";
-    $db = mysqli_query($con,$queryusers);
-    while ( $d=mysqli_fetch_assoc($db)) {
-     echo "<option value='".$d['cement_name']."'>".$d['cement_name']."</option>";    }
-    ?>
-      </select>
+<td><label>Product</label></td>
+<td><select required name="product" class="txtField">
+		<option value = "">---Select---</option>																			<?php
+		foreach($products as $product) 
+		{																													?>
+			<option value="<?php echo $product['id'];?>"><?php echo $product['name'];?></option>										<?php	
+		}																													?>
+	</select>
 </td>
 
 
@@ -92,7 +90,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 </tr>
 
 
-<td><label>QUANTITY</label></td>
+<td><label>Quantity</label></td>
 <td><input type="text" name="qty" required class="txtField" pattern="[0-9]+" title="Input a valid number"></td>
 
 
@@ -125,5 +123,5 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 <?php
 }
 else
-header("Location:loginPage.php");
+	header("Location:../index.php");
 ?>

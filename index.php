@@ -12,7 +12,6 @@ if(isset($_SESSION["user_name"]))
 <body>
 <body background="images/bg.jpg" >
 <br />
-<!-- <div align="center"><img src="Images/logo.png"></div>       -->
     <script type="text/javascript">
 
     function submitAction(act) {
@@ -27,19 +26,19 @@ if(isset($_SESSION["user_name"]))
 <br /><br /><br /><br />
 <div align="center">
 
-<input  type="button" id = "addnewsale" class ="button" style="width:200px;"  value ="ADD NEW SALE" onClick="submitAction('entryPage.php')">
+<input  type="button" class ="button" style="width:200px;"  value ="ADD NEW SALE" onClick="document.location.href = 'sales/new.php?client=all'">
 
 <br /><br /><br /><br />
-<input type="button" id = "list_today_sales" class ="button" style="width:200px;" value ="LIST TODAY'S SALES" onClick="document.location.href = 'list_today_sales.php?ar=all'">
+<input type="button" id = "list_today_sales" class ="button" style="width:200px;" value ="LIST TODAY'S SALES" onClick="document.location.href = 'sales/todayList.php?client=all'">
 
 <br /><br /><br /><br />
-<input type="button" id = "list_all_sales" class ="button" style="width:200px;" value ="LIST ALL SALES" onClick="document.location.href = 'list_all_sales.php?ar=all'">
+<input type="button" id = "list_all_sales" class ="button" style="width:200px;" value ="LIST ALL SALES" onClick="document.location.href = 'sales/list.php'">
 
 <br /><br /><br /><br />
-<input type="button" id = "ar" class ="button" style="width:200px;" value ="AR LIST" onClick="submitAction('arList.php')">
+<input type="button" id = "ar" class ="button" style="width:200px;" value ="AR LIST" onClick="submitAction('clients/list.php')">
 
 <br /><br /><br /><br />
-<input type="button" id = "cement" class ="button" style="width:200px;" value ="CEMENT LIST" onClick="submitAction('cementList.php')">
+<input type="button" id = "cement" class ="button" style="width:200px;" value ="CEMENT LIST" onClick="submitAction('products/list.php')">
 
 <br /><br /><br /><br />
 <input type="button" id = "reports" class ="button" style="width:200px;" value ="REPORTS" onClick="submitAction('reportpage.php')">
