@@ -10,7 +10,7 @@ if(isset($_SESSION["user_name"]))
    </head>
   
 <body>
-<body background="Images/bg.jpg" >
+<body background="images/bg.jpg" >
 <br />
 <!-- <div align="center"><img src="Images/logo.png"></div>       -->
     <script type="text/javascript">
