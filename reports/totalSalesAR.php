@@ -50,6 +50,7 @@ if(isset($_SESSION["user_name"]))
 	<script type="text/javascript" language="javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" language="javascript" src="../js/jquery-ui.min.js"></script>
 	<script type="text/javascript" language="javascript" src="../js/jquery.floatThead.min.js"></script>
+	<script type="text/javascript" src="../js/jquery.tablesorter.min.js"></script> 	
 	<script>
 	$(function() {
 		var pickerOpts = { dateFormat:"dd-mm-yy"}; 
@@ -61,6 +62,8 @@ if(isset($_SESSION["user_name"]))
 	});
 	
 	$(document).ready(function() {	
+	
+		$("#responstable").tablesorter(); 
 		var $table = $('.responstable');
 		$table.floatThead();	
 	});		
@@ -125,13 +128,15 @@ if(isset($_SESSION["user_name"]))
 		$total = $total + $arSale['SUM(qty)'];
 	}
 ?>	
-	<tr>
-		<td colspan="8"></td>
-	</tr>
-	<tr style="line-height:50px;background-color:#BEBEBE !important;font-family: Arial Black;">
-		<td colspan="3" style="text-align:right">TOTAL</td>
-		<td><?php echo $total;?></td>
-	</tr>
+	<thead>
+		<tr>
+			<td colspan="8"></td>
+		</tr>
+		<tr style="line-height:50px;background-color:#BEBEBE !important;font-family: Arial Black;">
+			<td colspan="3" style="text-align:right">TOTAL</td>
+			<td><?php echo $total;?></td>
+		</tr>
+	</thead>
 </table>
 <br><br><br><br><br><br>
 </div>
