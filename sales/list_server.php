@@ -109,8 +109,20 @@ if(isset($_SESSION["user_name"]))
 	}
 
 	if( !empty($requestData['columns'][2]['search']['value']) )
-	{  //ar
-		$sql.=" AND client LIKE '".$requestData['columns'][2]['search']['value']."%' ";
+	{  //client
+		$searchString = $requestData['columns'][2]['search']['value'];
+		$arList =  mysqli_query($con, "SELECT id FROM clients WHERE name LIKE '%".$searchString."%' ") or die(mysqli_error($con).' LINE 114');	
+		$firstEntry  = true;
+		foreach($arList as $ar)
+		{
+			if($firstEntry)
+				$sql.=" AND (client = '".$ar['id']."' ";		
+			else
+				$sql.=" OR client = '".$ar['id']."' ";		
+			
+			$firstEntry = false;
+		}
+				$sql.=")";		
 	}
 
 	if( !empty($requestData['columns'][3]['search']['value']) )
@@ -120,7 +132,19 @@ if(isset($_SESSION["user_name"]))
 
 	if( !empty($requestData['columns'][4]['search']['value']) )
 	{ 
-		$sql.=" AND product LIKE '".$requestData['columns'][4]['search']['value']."%' ";
+		$searchString = $requestData['columns'][4]['search']['value'];
+		$productList =  mysqli_query($con, "SELECT id FROM products WHERE name LIKE '%".$searchString."%' ") or die(mysqli_error($con).' LINE 114');	
+		$firstEntry  = true;
+		foreach($productList as $product)
+		{
+			if($firstEntry)
+				$sql.=" AND (product = '".$product['id']."' ";		
+			else
+				$sql.=" OR product = '".$product['id']."' ";		
+			
+			$firstEntry = false;
+		}
+				$sql.=")";		
 	}
 
 	if( !empty($requestData['columns'][5]['search']['value']) )

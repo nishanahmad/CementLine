@@ -7,10 +7,13 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	
 require '../connect.php';
 
-$result = mysqli_query($con,"SELECT id,name FROM products ORDER BY name") or die(mysqli_error($con));				 	 
+$result = mysqli_query($con,"SELECT * FROM products ORDER BY name") or die(mysqli_error($con));				 	 
 
-?>
-
+$brands = mysqli_query($con,"SELECT * FROM brands ORDER BY name") or die(mysqli_error($con));				 	 
+foreach($brands as $brand)
+{
+	$brandMap[$brand['id']] = $brand['name'];
+}																																					?>
 <html>
 <head>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
@@ -31,7 +34,7 @@ $('#datatables').dataTable({
 })
 
 </script>
-<title>CEMENT List</title>
+<title>Products</title>
 <link rel="stylesheet" type="text/css" href="css/styles.css" />
 </head>
 <body>
@@ -47,6 +50,7 @@ $('#datatables').dataTable({
 <tr>
 <th>Edit</th>
 <th>Product Name</th>
+<th>Brand</th>
 </tr>
 </thead>
  <tbody>
@@ -57,6 +61,7 @@ while($row = mysqli_fetch_array($result,MYSQLI_ASSOC))
 <tr>
 	<td><a href="edit.php?id=<?php echo $row["id"]; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>
 	<td><?php echo $row['name']?></td>
+	<td><?php echo $brandMap[$row['brand']]?></td>
 </tr>
 <?php
 }

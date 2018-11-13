@@ -1,56 +1,53 @@
 <?php
 session_start();
 if(isset($_SESSION["user_name"]))
-{
-?>
-
+{																						?>
 <html>
-   <head>
-   <link rel="stylesheet" type="text/css" href="css/style.css">
-   </head>
-  
+<style type="text/css">
+a{
+  text-decoration:none;
+}
+</style>
+<head>
+<title>HOME</title>
+<link rel="stylesheet" type="text/css" href="css/index.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 <body>
-<body background="images/bg.jpg" >
-<br />
-    <script type="text/javascript">
 
-    function submitAction(act) {
-         document.sample.action = act;
-         document.sample.submit();
-
-    }
-    </script>
-	
-    <form name ="sample" action="default.php">
-
-<br /><br /><br /><br />
-<div align="center">
-
-<input  type="button" class ="button" style="width:200px;"  value ="ADD NEW SALE" onClick="document.location.href = 'sales/new.php?client=all'">
-
-<br /><br /><br /><br />
-<input type="button" id = "list_today_sales" class ="button" style="width:200px;" value ="LIST TODAY'S SALES" onClick="document.location.href = 'sales/todayList.php?client=all'">
-
-<br /><br /><br /><br />
-<input type="button" id = "list_all_sales" class ="button" style="width:200px;" value ="LIST ALL SALES" onClick="document.location.href = 'sales/list.php'">
-
-<br /><br /><br /><br />
-<input type="button" id = "ar" class ="button" style="width:200px;" value ="AR LIST" onClick="submitAction('clients/list.php')">
-
-<br /><br /><br /><br />
-<input type="button" id = "cement" class ="button" style="width:200px;" value ="CEMENT LIST" onClick="submitAction('products/list.php')">
-
-<br /><br /><br /><br />
-<input type="button" id = "reports" class ="button" style="width:200px;" value ="REPORTS" onClick="submitAction('reportpage.php')">
-
+<div class="background">
 </div>
-    </form>
+<div class="container">
+  <div class="row">
+    <h1>CEMENT LINE</h1>
+  </div>
+  <hr/>
+</div>
+   
+<br><br>
 
+	<div class="row">
+	
+	<a href="sales/todayList.php?client=all" class="btn lg ghost">LIST TODAY SALES</a>
+    <br><br><br>
+
+	<a href="sales/list.php" class="btn lg ghost">LIST ALL SALES</a>
+    <br><br><br><br>
+		
+   	<a href="clients/list.php" class="btn lg ghost">AR DETAILS & POINTS</a>
+    <br><br><br>	
+	
+   	<a href="products/list.php" class="btn lg ghost">PRODUCTS</a>
+    <br><br><br>		
+	
+	<a href="reports/" class="btn lg ghost">REPORTS</a>
+    <br><br><br>
+
+	</div>
 </body>
 </html>
-
 <?php
 }
 else
-header("Location:loginPage.php");
+	header("Location:loginPage.php");
 ?>

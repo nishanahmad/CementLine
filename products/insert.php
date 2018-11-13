@@ -9,8 +9,9 @@ session_start();
 if(isset($_SESSION["user_name"]))
 {
 	$product = $_POST['name'];
+	$brand = (int)$_POST['brand'];
 
-	$sql="INSERT INTO products (name) VALUES ('$product')";
+	$sql="INSERT INTO products (name,brand) VALUES ('$product',$brand)";
 
 	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 	 
 		 

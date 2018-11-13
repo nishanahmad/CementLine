@@ -2,30 +2,28 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
-if(isset($_SESSION["user_name"]))
+if(isset($_SESSION['user_name']))
 {
-echo "LOGGED USER : ".$_SESSION["user_name"] ;	
+	require '../connect.php';
 
-require '../connect.php';
-  
-$id = $_GET["id"];  
+	$brands = mysqli_query($con, "SELECT * FROM brands order by name ASC" ) or die(mysqli_error($con));		  
+	$id = $_GET['id'];  
 
-if(count($_POST)>0) 
-{
-	$name = $_POST["name"];
-	$query = mysqli_query($con,"UPDATE products SET name='$name' WHERE id=$id ") or die(mysqli_error($con));				 	 
+	if(count($_POST)>0) 
+	{
+		$name = $_POST['name'];
+		$brand = (int)$_POST['brand'];
+		
+		$query = mysqli_query($con,"UPDATE products SET name='$name',brand = $brand WHERE id=$id ") or die(mysqli_error($con));				 	 
 
-	header( "Location: list.php" );
-}
+		header( "Location: list.php" );
+	}
 
-
-$result = mysqli_query($con,"SELECT * FROM products WHERE id=$id ");
-$row= mysqli_fetch_array($result,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 											?>
-?>
-
+	$result = mysqli_query($con,"SELECT * FROM products WHERE id=$id ");
+	$row= mysqli_fetch_array($result,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 											?>
 <html>
 <head>
-<title>Edit Cement <?php echo $row['cement_name']; ?></title>
+<title>Edit Product</title>
 <link rel="stylesheet" type="text/css" href="../css/newEdit.css" />
 </head>
 <body>
@@ -45,7 +43,23 @@ $row= mysqli_fetch_array($result,MYSQLI_ASSOC) or die(mysqli_error($con));				 	
 
 <td><label>Product Name</label></td>
 <td><input type="text" name="name" class="txtField" value="<?php echo $row['name']; ?>"></td>
+</tr>
 
+<td><label>BRAND</label></td>
+<td><select required name="brand" class="txtField">																		<?php
+	foreach($brands as $brand)																							 
+	{
+		if($brand['id'] == $row['brand'])
+		{																												?>
+			<option selected value="<?php echo $brand['id'];?>"><?php echo $brand['name'];?></option>					<?php		
+		}
+		else
+		{																												?>
+			<option value="<?php echo $brand['id'];?>"><?php echo $brand['name'];?></option>							<?php		
+		}				
+	}																													?>		
+	</select>
+</td>
 </tr>
 
 <tr>
@@ -60,5 +74,5 @@ $row= mysqli_fetch_array($result,MYSQLI_ASSOC) or die(mysqli_error($con));				 	
 <?php
 }
 else
-header("Location:loginPage.php");
+header("Location:../index.php");
 ?>

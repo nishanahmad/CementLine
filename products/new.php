@@ -2,6 +2,8 @@
 session_start();
 if(isset($_SESSION["user_name"]))
 {
+	require '../connect.php';
+	$brands = mysqli_query($con, "SELECT * FROM brands order by name ASC" ) or die(mysqli_error($con));		
 ?>
 
 <html>
@@ -11,9 +13,6 @@ if(isset($_SESSION["user_name"]))
 <link rel="stylesheet" type="text/css" href="../css/newEdit.css" />
 </head>
 <body>
-<?php
-echo "LOGGED USER : ".$_SESSION["user_name"] ;
-?>
 <form name="frm" method="post" action="insert.php" >
 <div style="width:100%;">
 <div align="center" style="padding-bottom:5px;">
@@ -29,6 +28,17 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 
 <td><label>CEMENT NAME (WITH TYPE)</label></td>
 <td><input type="text" name="name" class="txtField"></td>
+</tr>
+
+<td><label>BRAND</label></td>
+<td><select required name="brand" class="txtField">
+	<option value="">--SELECT--</option><?php
+	foreach($brands as $brand) 
+	{																													?>
+		<option value="<?php echo $brand['id'];?>"><?php echo $brand['name'];?></option>								<?php
+	}																													?>
+	</select>
+</td>
 </tr>
 
 <tr>
