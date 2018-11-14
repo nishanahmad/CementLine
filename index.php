@@ -37,7 +37,7 @@ a{
    	<a href="clients/list.php" class="btn lg ghost">CLIENTS</a>
     <br><br><br>	
 	
-   	<a href="target/" class="btn lg ghost">TARGET & POINTS</a>
+   	<a href="Target/" class="btn lg ghost">TARGET & POINTS</a>
     <br><br><br>		
 	
    	<a href="products/list.php" class="btn lg ghost">PRODUCTS</a>
