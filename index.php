@@ -34,8 +34,11 @@ a{
 	<a href="sales/list.php" class="btn lg ghost">LIST ALL SALES</a>
     <br><br><br><br>
 		
-   	<a href="clients/list.php" class="btn lg ghost">AR DETAILS & POINTS</a>
+   	<a href="clients/list.php" class="btn lg ghost">CLIENTS</a>
     <br><br><br>	
+	
+   	<a href="target/" class="btn lg ghost">TARGET & POINTS</a>
+    <br><br><br>		
 	
    	<a href="products/list.php" class="btn lg ghost">PRODUCTS</a>
     <br><br><br>		
