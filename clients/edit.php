@@ -1,62 +1,63 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 session_start();
 if(isset($_SESSION["user_name"]))
 {
-echo "LOGGED USER : ".$_SESSION["user_name"] ;	
-
-require '../connect.php';
-  
-$id = $_GET["id"];  
-if(count($_POST)>0) 
-{
-	
-	$name = $_POST["name"];
-	$query = mysqli_query($con,"UPDATE clients SET name='$name' WHERE id=$id ") or die(mysqli_error($con));				 	 
-
-	header( "Location: list.php" );
-}
-
-$result = mysqli_query($con,"SELECT * FROM clients WHERE id=$id ");
-$row= mysqli_fetch_array($result,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 											?>
-
+	require '../connect.php';
+    
+	$id = $_GET['id'];
+	$sql = mysqli_query($con,"SELECT * FROM clients WHERE id='$id'") or die(mysqli_error($con));
+	$ar = mysqli_fetch_array($sql,MYSQLI_ASSOC);	
+?>
 <html>
-<head>
-<title>Edit Sale <?php echo $row['sales_id']; ?></title>
-<link rel="stylesheet" type="text/css" href="../css/newEdit.css" />
-</head>
-<body>
-<form name="frmUser" method="post" action="">
-<div style="width:100%;">
-
-<div align="center" style="padding-bottom:5px;">
-	<a href="../index.php" class="link"><img alt='Home' title='Home' src='../images/home.png' width='50px' height='50px'/></a>&nbsp;&nbsp;
-	<a href="list.php" class="link"><img alt='List' title='List' src='../images/list_icon.jpg' width='50px' height='50px'/></a>
-</div>
-
-<br>
-<table border="0" cellpadding="10" cellspacing="0" width="80%" align="center" class="tblSaveForm">
-<tr class="tableheader">
-<td colspan="4"><div align ="center"><b><font size="4">Edit AR <?php echo $row['name']; ?> </font><b></td>
-</tr>
-
-<td><label>AR NAME</label></td>
-<td><input type="text" name="name" class="txtField" value="<?php echo $row['name']; ?>"></td>
-
-</tr>
-
-<tr>
-<td colspan="2" align = "center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></td>
-</tr>
-
-</table>
-</div>
-</form>
-</body></html>
-
+	<head>
+		<title><?php echo $ar['name'];?></title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
+		<link href="../css/bootstrap.min.css" rel="stylesheet">
+		<link href="../css/dashio.css" rel="stylesheet">
+		<link href="../css/dashio-responsive.css" rel="stylesheet">	
+		<link href="../css/font-awesome.min.css" rel="stylesheet">		
+		<script type="text/javascript" language="javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" language="javascript" src="../js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	</head>
+	<section class="wrapper">
+		<h2><i class="fa fa-user" style="margin-right:.5em;margin-left:.5em;"></i><?php echo $ar['name'];?></h3>
+		<div class="row mt">
+			<div class="col-lg-8">
+				<div class="form-panel">
+					<h4 class="mb"><i class="fa fa-angle-right" style="margin-right:.5em;"></i>Edit</h4>
+					<form class="form-horizontal style-form"  action="update.php" method="post">
+						<input type="hidden" name="id" value="<?php echo $ar['id'];?>">
+						<div class="form-group">
+							<label class="col-sm-2 col-sm-2 control-label">Name</label>
+							<div class="col-sm-6">
+								<input type="text" name="name" value="<?php echo $ar['name'];?>" class="form-control">
+							</div>
+						</div>					
+						<div class="form-group">
+							<label class="col-sm-2 col-sm-2 control-label">Mobile</label>
+							<div class="col-sm-6">
+								<input type="text" name="mobile" value="<?php echo $ar['mobile'];?>" class="form-control">
+							</div>
+						</div>															
+						<div class="form-group">
+							<label class="col-sm-2 col-sm-2 control-label">Shop</label>
+							<div class="col-sm-6">
+								<input type="text" name="shop" value="<?php echo $ar['shop'];?>" class="form-control">
+							</div>
+						</div>																					
+						<button type="submit" class="btn btn-primary" style="margin-left:200px;" tabindex="4">Update</button> 
+						<a href="view.php?id=<?php echo $ar['id'];?>" class="btn btn-default" style="margin-left:10px;">Cancel</a>
+						<br/><br/>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+</html>	
 <?php
 }
 else
-header("Location:loginPage.php");
+	header("Location:../index.php");
 ?>
