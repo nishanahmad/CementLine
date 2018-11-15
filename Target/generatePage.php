@@ -2,7 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <?php
 session_start();
-if(isset($_SESSION["user_name"]))
+if(isset($_SESSION['user_name']))
 {
 	require '../connect.php';
 	require 'insertNewMonthPoints.php'; 
@@ -10,14 +10,14 @@ if(isset($_SESSION["user_name"]))
 	$year = $_GET['year'];
 	$month = $_GET['month'];
 
-	$arObjects = mysqli_query($con, "SELECT id,name FROM ar_details WHERE isActive = 1 ORDER BY name asc") or die(mysqli_error($con).' LINE 13');
+	$arObjects = mysqli_query($con, "SELECT * FROM clients WHERE isActive = 1 ORDER BY name asc") or die(mysqli_error($con).' LINE 13');
 	foreach($arObjects as $ar)
 	{
 		$arMap[$ar['id']] = $ar['name'];
 	}
 	
 	$array = implode("','",array_keys($arMap));	
-	$sql = "SELECT ar_id, target, rate, payment_perc FROM target WHERE year='$year' AND Month='$month' AND ar_id IN ('$array')";
+	$sql = "SELECT * FROM target WHERE year='$year' AND Month='$month' AND client IN ('$array')";
 	$result = mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 21');		
 
 	if(mysqli_num_rows($result) > 0)
@@ -34,7 +34,7 @@ if(isset($_SESSION["user_name"]))
 	{
 		insertNewMonthPoints($month,$year);
 		
-		$sql = "SELECT ar_id, target, rate, payment_perc FROM target WHERE year='$year' AND Month='$month'  AND ar_id IN ('$array')";
+		$sql = "SELECT * FROM target WHERE year='$year' AND Month='$month'  AND client IN ('$array')";
 		$result = mysqli_query($con, $sql) or die(mysqli_error($con));				
 	}	
 ?>
@@ -45,7 +45,7 @@ if(isset($_SESSION["user_name"]))
 <link href="../css/responstable.css" rel="stylesheet">
 <link href="../css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" language="javascript" src="js/jquery.js"></script>
-<title>AR List</title>
+<title>New Target</title>
 <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
@@ -60,14 +60,14 @@ if(isset($_SESSION["user_name"]))
 <form name="arBulkUpdate" method="post" action="updateServer.php">
 	<table align="center" class="responstable" style="width:50%;">
 		<tr>
-			<th style="width:40%">AR NAME</th>
-			<th style="width:20%;text-align:center;">TARGET</th>
-			<th style="width:20%;text-align:center;">RATE</th>
-			<th style="width:20%;text-align:center;">PAYMENT %</th> 
+			<th style="width:40%">Client Name</th>
+			<th style="width:20%;text-align:center;">Target</th>
+			<th style="width:20%;text-align:center;">Rate</th>
+			<th style="width:20%;text-align:center;">Payment %</th> 
 		</tr>																												<?php
 		while($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) 
 		{
-			$arId = $row['ar_id'];
+			$arId = $row['client'];
 			$target = $row['target'];
 			$rate = $row['rate'];
 			$pp = $row['payment_perc'];																						?>				

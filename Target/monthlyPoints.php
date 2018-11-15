@@ -18,41 +18,47 @@ if(isset($_SESSION["user_name"]))
 		$month = (int)date("m");
 	}
 
-	$zeroTargetList = mysqli_query($con,"SELECT ar_id FROM target WHERE year = '$year' AND month  = '$month' AND target = 0") or die(mysqli_error($con));		 
+	$zeroTargetMap = array();
+	$zeroTargetList = mysqli_query($con,"SELECT * FROM target WHERE year = '$year' AND month  = '$month' AND target = 0") or die(mysqli_error($con));		 
 	foreach($zeroTargetList as $zeroTarget)
 	{
-		$zeroTargetMap[$zeroTarget['ar_id']] = null;
+		$zeroTargetMap[$zeroTarget['client']] = null;
 	}
 	
 	$zeroTargetIds = implode("','",array_keys($zeroTargetMap));	
 	
-	$arObjects =  mysqli_query($con,"SELECT id,name,mobile,shop_name,sap_code FROM ar_details WHERE  isActive = 1 AND id NOT IN ('$zeroTargetIds') AND Type LIKE '%AR%' ORDER BY name ASC ") or die(mysqli_error($con));		 
+	$arMap = array();
+	$arObjects =  mysqli_query($con,"SELECT * FROM clients WHERE  isActive = 1 AND id NOT IN ('$zeroTargetIds') ORDER BY name ASC ") or die(mysqli_error($con));		 
 	foreach($arObjects as $ar)
 	{
 		$arMap[$ar['id']]['name'] = $ar['name'];
 		$arMap[$ar['id']]['mobile'] = $ar['mobile'];
-		$arMap[$ar['id']]['shop'] = $ar['shop_name'];
-		$arMap[$ar['id']]['sap'] = $ar['sap_code'];
+		$arMap[$ar['id']]['shop'] = $ar['shop'];
 	}				
 	
 	$arIds = implode("','",array_keys($arMap));
-	$targetObjects = mysqli_query($con,"SELECT ar_id, target, payment_perc,rate FROM target WHERE  month = '$month' AND Year='$year' AND ar_id IN('$arIds')") or die(mysqli_error($con));		 
+	$targetObjects = mysqli_query($con,"SELECT * FROM target WHERE  month = '$month' AND Year='$year' AND client IN('$arIds')") or die(mysqli_error($con));		 
+	$targetMap = array();
 	foreach($targetObjects as $target)
 	{
-		$targetMap[$target['ar_id']]['target'] = $target['target'];
-		$targetMap[$target['ar_id']]['rate'] = $target['rate'];
-		$targetMap[$target['ar_id']]['payment_perc'] = $target['payment_perc'];
+		$targetMap[$target['client']]['target'] = $target['target'];
+		$targetMap[$target['client']]['rate'] = $target['rate'];
+		$targetMap[$target['client']]['payment_perc'] = $target['payment_perc'];
 	}
 	
-
-
-	$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM nas_sale WHERE '$year' = year(`entry_date`) AND '$month' = month(`entry_date`) AND ar_id IN ('$arIds') GROUP BY ar_id") or die(mysqli_error($con));	
+	$miscProducts =  mysqli_query($con,"SELECT * FROM products WHERE brand = (SELECT id FROM brands WHERE name = 'MISC')") or die(mysqli_error($con));		 
+	foreach($miscProducts as $miscProduct)
+		$miscMap[$miscProduct['id']] = null;
+	
+	$miscIds = implode("','",array_keys($miscMap));
+	
+	$sales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') AND product NOT IN('$miscIds') GROUP BY client") or die(mysqli_error($con));	
 
 	$mainArray = array();
 	foreach($sales as $sale)
 	{
-		$arId = $sale['ar_id'];
-		$total = $sale['SUM(srp)'] + $sale['SUM(srh)'] + $sale['SUM(f2r)'] - $sale['SUM(return_bag)'];
+		$arId = $sale['client'];
+		$total = $sale['SUM(qty)'];
 		if(isset($targetMap[$arId]))
 		{
 			$points = round($total * $targetMap[$arId]['rate'],0);
@@ -157,7 +163,6 @@ function rerender()
 				<th style="width:20%;text-align:left;">AR</th>
 				<th style="width:12%;">Mobile</th>
 				<th style="width:25%;text-align:left;">Shop</th>
-				<th style="width:10%;">SAP</th>
 				<th>Target</th>
 				<th>Sale</th>
 				<th>Rate</th>
@@ -197,7 +202,6 @@ function rerender()
 					<td style="text-align:left;"><?php echo $arMap[$arId]['name'];?></b></td>
 					<td><?php echo $arMap[$arId]['mobile'];?></b></td>
 					<td style="text-align:left;"><?php echo $arMap[$arId]['shop'];?></b></td>
-					<td><?php echo $arMap[$arId]['sap'];?></b></td>
 					<td><?php echo $target;?></td>
 					<td><?php echo $mainArray[$arId]['actual_sale'];?></td>
 					<td><?php echo $rate;?></td>
@@ -214,12 +218,11 @@ function rerender()
 					<th style="width:20%;"></th>
 					<th style="width:12%;"></th>
 					<th style="width:25%;"></th>
-					<th style="width:10%;"></th>
 					<th><?php echo $totalTarget;?></th>
 					<th><?php echo $totalSale;?></th>
 					<th></th>
 					<th><?php echo $totalPoints;?></th>
-					<th><?php echo round($totalSale/$totalTarget*100,1)?>%</th>
+					<th><?php if($totalTarget >0) echo round($totalSale/$totalTarget*100,1); else echo '0'?>%</th>
 					<th></th>	
 					<th></th>	
 					<th></th>
