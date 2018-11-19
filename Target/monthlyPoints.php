@@ -52,8 +52,20 @@ if(isset($_SESSION["user_name"]))
 	
 	$miscIds = implode("','",array_keys($miscMap));
 	
-	$sales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') AND product NOT IN('$miscIds') GROUP BY client") or die(mysqli_error($con));	
+	$coromandelProducts =  mysqli_query($con,"SELECT * FROM products WHERE brand = (SELECT id FROM brands WHERE name = 'COROMANDEL')") or die(mysqli_error($con));		 
+	foreach($coromandelProducts as $coromandelProduct)
+		$coromandelMap[$coromandelProduct['id']] = null;
+	
+	$corIds = implode("','",array_keys($coromandelMap));	
+	
+	$otherSaleMap = array();
+	$otherSales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') AND product NOT IN('$corIds') AND product NOT IN('$miscIds') GROUP BY client") or die(mysqli_error($con));
+	foreach($otherSales as $sale)
+	{
+		$otherSaleMap[$sale['client']] = $sale['SUM(qty)'];
+	}
 
+	$sales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') AND product IN('$corIds') GROUP BY client") or die(mysqli_error($con));		
 	$mainArray = array();
 	foreach($sales as $sale)
 	{
@@ -164,7 +176,8 @@ function rerender()
 				<th style="width:12%;">Mobile</th>
 				<th style="width:25%;text-align:left;">Shop</th>
 				<th>Target</th>
-				<th>Sale</th>
+				<th>Other Sale</th>
+				<th>Cormandel Sale</th>
 				<th>Rate</th>
 				<th>Points</th>
 				<th>Actual%</th>	
@@ -177,6 +190,7 @@ function rerender()
 							
 																																						<?php
 			$totalTarget = 0;
+			$totalOtherSale = 0;	
 			$totalSale = 0;	
 			$totalPoints = 0;		
 			$totalPaymentPoints = 0;					
@@ -194,7 +208,11 @@ function rerender()
 					$mainArray[$arId]['point_perc'] = null;
 					$mainArray[$arId]['achieved_points'] = null;
 					$mainArray[$arId]['payment_points'] = null;
-				}																																	
+				}										
+				if(!isset($otherSaleMap[$arId]))
+					$otherSaleMap[$arId] = null;
+				
+				$totalOtherSale = $totalOtherSale + $otherSaleMap[$arId];
 				$totalSale = $totalSale + $mainArray[$arId]['actual_sale'];
 				$totalPoints = $totalPoints + $mainArray[$arId]['points'];
 				$totalPaymentPoints = $totalPaymentPoints + $mainArray[$arId]['payment_points'];							?>
@@ -203,6 +221,7 @@ function rerender()
 					<td><?php echo $arMap[$arId]['mobile'];?></b></td>
 					<td style="text-align:left;"><?php echo $arMap[$arId]['shop'];?></b></td>
 					<td><?php echo $target;?></td>
+					<td><?php echo $otherSaleMap[$arId];?></td>
 					<td><?php echo $mainArray[$arId]['actual_sale'];?></td>
 					<td><?php echo $rate;?></td>
 					<td><?php echo $mainArray[$arId]['points'];?></td>
@@ -219,6 +238,7 @@ function rerender()
 					<th style="width:12%;"></th>
 					<th style="width:25%;"></th>
 					<th><?php echo $totalTarget;?></th>
+					<th><?php echo $totalOtherSale;?></th>
 					<th><?php echo $totalSale;?></th>
 					<th></th>
 					<th><?php echo $totalPoints;?></th>
