@@ -98,15 +98,11 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 <td><input type="text" name="address2" class="txtField"></td>
 </tr>
 
-
-
+<td><label>Rate</label></td>
+<td><input type="text" name="rate" class="txtField"></td>
 
 <td><label>Remarks</label></td>
 <td><input type="text" name="remarks" class="txtField"></td>
-
-
-
-
 </tr>
 
 </tr>

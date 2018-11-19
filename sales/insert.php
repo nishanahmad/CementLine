@@ -12,6 +12,7 @@ if(isset($_SESSION["user_name"]))
 	$truck = $_POST['truck'];
 	$product = $_POST['product'];
 	$qty = $_POST['qty'];
+	$rate = $_POST['rate'];
 	$remarks = $_POST['remarks'];
 	$bill = $_POST['bill'];
 	$customerName = $_POST['customerName'];
@@ -20,11 +21,14 @@ if(isset($_SESSION["user_name"]))
 	$address2 = $_POST['address2'];
 	$entered_by = $_SESSION["user_name"];
 	$entered_on = date('Y-m-d H:i:s');	
+	
+	if(empty($rate))
+		$rate = 'null';
 
 
-	$sql="INSERT INTO sales (date, client, truck_no, product, qty, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
+	$sql="INSERT INTO sales (date, client, truck_no, product, qty, rate, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
 		 VALUES
-		 ('$sqlDate', '$client', '$truck', '$product', '$qty', '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
+		 ('$sqlDate', '$client', '$truck', '$product', '$qty', $rate, '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
 
 	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 	 
 		 

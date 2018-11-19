@@ -16,17 +16,21 @@ if(count($_POST)>0)
 	$sqlDate = date("Y-m-d", strtotime($date));
 	$truck = $_POST['truck'];
 	$qty = $_POST['qty'];
-	$remarks = $_POST['remarks'];
+	$rate = $_POST['rate'];
 	$bill = $_POST['bill'];
 	$customerName = $_POST['customerName'];
 	$customerPhone = $_POST['customerPhone'];
 	$address1 = $_POST['address1'];
 	$address2 = $_POST['address2'];
+	$remarks = $_POST['remarks'];
 	
-	$update = mysqli_query($con,"UPDATE sales SET date='$sqlDate', truck_no='$truck', qty='$qty' ,
-								 remarks='$remarks', bill_no='$bill', 
+	if(empty($rate))
+		$rate = 'null';
+	
+	$update = mysqli_query($con,"UPDATE sales SET date='$sqlDate', truck_no='$truck', qty='$qty',
+								 rate = $rate,  bill_no='$bill', 
 								 address1='$address1', address2='$address2', customer_name='$customerName', 
-								 customer_phone='$customerPhone'
+								 customer_phone='$customerPhone', remarks='$remarks'
 								 WHERE id = $id") or die(mysqli_error($con));				 	 
 
 	  $url = 'todayList.php?client=all';
@@ -128,8 +132,8 @@ $( "#datepicker" ).datepicker(pickerOpts);
 <td><input type="text" name="address2" class="txtField" value="<?php echo $sale['address2']; ?>"></td>
 </tr>
 
-
-
+<td><label>Rate</label></td>
+<td><input type="text" name="rate" class="txtField" value="<?php echo $sale['rate']; ?>"></td>
 
 <td><label>Remarks</label></td>
 <td><input type="text" name="remarks" class="txtField" value="<?php echo $sale['remarks']; ?>"></td>
