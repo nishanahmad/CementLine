@@ -10,12 +10,10 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	$id = $_GET['client'];
 	if($id != 'all')
 	{
-		$result = mysqli_query($con,"SELECT id, date,client,truck_no,product,qty,remarks, bill_no, customer_name, customer_phone, address1, address2
-								FROM sales  WHERE client=$id AND date >= CURDATE() order by bill_no asc ") or die(mysqli_error($con));				 	 	
+		$result = mysqli_query($con,"SELECT * FROM sales  WHERE client=$id AND date >= CURDATE() order by bill_no asc ") or die(mysqli_error($con));				 	 	
 	}
 	else
-		$result = mysqli_query($con,"SELECT id, date,client,truck_no,product,qty,remarks, bill_no, customer_name, customer_phone, address1, address2
-								FROM sales WHERE date >= CURDATE() order by bill_no asc  ") or die(mysqli_error($con));				 	 
+		$result = mysqli_query($con,"SELECT * FROM sales WHERE date >= CURDATE() order by bill_no asc  ") or die(mysqli_error($con));				 	 
 								
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
@@ -68,6 +66,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 <td>TRUCK NO</td>
 <td>PRODUCT</td>
 <td>QTY</td>
+<td>RATE</td>
 <td>BILL NO</td>
 <td>CUST. NAME</td>
 <td>CUST. PHONE</td>
@@ -101,6 +100,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	<td><?php echo $row["truck_no"]; ?></td>
 	<td><?php echo $productNameMap[$row['product']]; ?></td>
 	<td><?php echo $row["qty"]; ?></td>
+	<td><?php echo $row["rate"]; ?></td>
 	<td><?php echo $row["bill_no"]; ?></td>
 	<td><?php echo $row["customer_name"]; ?></td>
 	<td><?php echo $row["customer_phone"]; ?></td>
