@@ -94,17 +94,17 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
             }																																?>
 	
 <tr class="blue">
-	<td><a href="edit.php?id=<?php echo $row["id"]; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>  
-	<td><?php echo date("d-m-Y", strtotime($row["date"])); ?></td>
+	<td><a href="edit.php?id=<?php echo $row['id']; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>  
+	<td><?php echo date('d-m-Y', strtotime($row['date'])); ?></td>
 	<td><?php echo $clientMap[$row['client']]; ?></td>
-	<td><?php echo $row["truck_no"]; ?></td>
+	<td><?php echo $row['truck_no']; ?></td>
 	<td><?php echo $productNameMap[$row['product']]; ?></td>
-	<td><?php echo $row["qty"]; ?></td>
-	<td><?php echo $row["rate"]; ?></td>
-	<td><?php echo $row["bill_no"]; ?></td>
-	<td><?php echo $row["customer_name"]; ?></td>
-	<td><?php echo $row["customer_phone"]; ?></td>
-	<td><?php echo $row["remarks"]; ?></td>
+	<td><?php echo $row['qty']; ?></td>
+	<td><?php echo $row['rate'] - $row['cd'] - $row['qd'] - $row['sd']; ?></td>
+	<td><?php echo $row['bill_no']; ?></td>
+	<td><?php echo $row['customer_name']; ?></td>
+	<td><?php echo $row['customer_phone']; ?></td>
+	<td><?php echo $row['remarks']; ?></td>
 </tr>
 
 	<?php

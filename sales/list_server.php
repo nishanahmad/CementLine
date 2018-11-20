@@ -25,22 +25,23 @@ if(isset($_SESSION["user_name"]))
 		3 => 'truck_no',
 		4=> 'product',
 		5=> 'qty',
-		6=> 'bill_no',
-		7=> 'customer_name',
-		8=> 'customer_phone',
-		9=> 'remarks'
+		6=> 'rate',
+		7=> 'bill_no',
+		8=> 'customer_name',
+		9=> 'customer_phone',
+		10=> 'remarks'
 	);
 
 	// getting total number records without any search
 
-	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks";
+	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks,rate,cd,qd,sd";
 	$sql.=" FROM sales ORDER BY date DESC";
 	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 27');	
 	$totalData = mysqli_num_rows($query);
 	$totalFiltered = $totalData;  // when there is no search parameter then total number rows = total number filtered rows.
 
 
-	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks";
+	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks,rate,cd,qd,sd";
 	$sql.=" FROM sales where 1=1  ";
 
 	if( !empty($requestData['columns'][0]['search']['value']) )
@@ -192,6 +193,11 @@ if(isset($_SESSION["user_name"]))
 		$nestedData[] = $productMap[$row['product']];
 		$nestedData[] = $row["qty"];
 			$total = $total + $row["qty"];
+		$rate = $row["rate"]-$row["cd"]-$row["qd"]-$row["sd"];
+		if($rate > 0)
+			$nestedData[] = $rate;
+		else
+			$nestedData[] = null;
 		$nestedData[] = $row["bill_no"];
 		$nestedData[] = $row["customer_name"];
 		$nestedData[] = $row["remarks"];

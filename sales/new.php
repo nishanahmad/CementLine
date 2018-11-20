@@ -23,6 +23,21 @@ var pickerOpts = { dateFormat:"d-mm-yy"};
 $( "#datepicker" ).datepicker(pickerOpts);
 
 });
+
+function refreshRate()
+{
+	var rate=document.getElementById("rate").value;
+	var cd=document.getElementById("cd").value;
+	var qd=document.getElementById("qd").value;
+	var sd=document.getElementById("sd").value;
+	
+	$('#final').val(rate-cd-qd-sd);
+
+	console.log(rate);
+	console.log(cd);
+	console.log(qd);
+	console.log(sd);
+}
 </script>
 <link rel="stylesheet" type="text/css" href="../css/newEdit.css" />
 </head>
@@ -39,82 +54,102 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 </div>
 <br>
 <table border="0" cellpadding="15" cellspacing="0" width="80%" align="center" style="float:center" class="tblSaveForm">
-<tr class="tableheader">
-<td colspan="4"><div align ="center"><b><font size="4">ADD NEW SALES ENTRY </font><b></td>
-</tr>
+	<tr class="tableheader">
+		<td colspan="4"><div align ="center"><b><font size="4">ADD NEW SALES ENTRY </font><b></td>
+	</tr>
 
-<tr>
-<td><label>Date</label></td>
-<td><input type="text" id="datepicker" class="txtField" name="date" required value="<?php echo date('d-m-Y'); ?>" /></td>
+	<tr>
+		<td><label>Date</label></td>
+		<td><input type="text" id="datepicker" class="txtField" name="date" required value="<?php echo date('d-m-Y'); ?>" /></td>
 
-<td><label>Customer Phone</label></td>
-<td><input type="text" name="customerPhone" class="txtField"></td>
-</tr>
+		<td><label>Bill No</label></td>
+		<td><input type="text" name="bill" class="txtField"></td>
+	</tr>
 
-<td><label>AR</label></td>
-<td><select required name="client" class="txtField">
-		<option value = "">---Select---</option>																			<?php
-		foreach($clients as $client) 
-		{																													?>
-			<option value="<?php echo $client['id'];?>"><?php echo $client['name'];?></option>										<?php	
-		}																													?>
-	</select>
-</td>
+	<tr>
+		<td><label>AR</label></td>
+		<td><select required name="client" class="txtField">
+				<option value = "">---Select---</option>																			<?php
+				foreach($clients as $client) 
+				{																													?>
+					<option value="<?php echo $client['id'];?>"><?php echo $client['name'];?></option>										<?php	
+				}																													?>
+			</select>
+		</td>
 
-<td><label>Bill No</label></td>
-<td><input type="text" name="bill" class="txtField"></td>
-</tr>
+		<td><label>Truck no</label></td>
+		<td><input type="text" name="truck" class="txtField"></td>
+	</tr>
+	
+	<tr>
+		<td><label>Product</label></td>
+		<td><select required name="product" class="txtField">
+				<option value = "">---Select---</option>																			<?php
+				foreach($products as $product) 
+				{																													?>
+					<option value="<?php echo $product['id'];?>"><?php echo $product['name'];?></option>										<?php	
+				}																													?>
+			</select>
+		</td>
 
-<td><label>Truck no</label></td>
-<td><input type="text" name="truck" class="txtField"></td>
+		<td><label>Customer Phone</label></td>
+		<td><input type="text" name="customerPhone" class="txtField"></td>
+	</tr>
 
+	<tr>
+		<td><label>Quantity</label></td>
+		<td><input type="text" name="qty" required class="txtField" pattern="[0-9]+" title="Input a valid number"></td>
 
-<td><label>Customer Name</label></td>
-<td><input type="text" name="customerName" class="txtField"></td>
-</tr>
+		<td><label>Customer Name</label></td>
+		<td><input type="text" name="customerName" class="txtField"></td>
+	</tr>
 
-<td><label>Product</label></td>
-<td><select required name="product" class="txtField">
-		<option value = "">---Select---</option>																			<?php
-		foreach($products as $product) 
-		{																													?>
-			<option value="<?php echo $product['id'];?>"><?php echo $product['name'];?></option>										<?php	
-		}																													?>
-	</select>
-</td>
+	<tr>
+		<td><label>Rate</label></td>
+		<td><input type="text" name="rate" class="txtField" id="rate" onchange="refreshRate();"></td>
 
+		<td><label>Address Part 1</label></td>
+		<td><input type="text" name="address1" class="txtField"></td>
+	</tr>
 
+	<tr>
+		<td><label>Cash Discount</label></td>
+		<td><input type="text" name="cd" class="txtField" id="cd" onchange="refreshRate();"></td>	
 
-<td><label>Address Part 1</label></td>
-<td><input type="text" name="address1" class="txtField"></td>
-</tr>
+		<td><label>Address Part 2</label></td>
+		<td><input type="text" name="address2" class="txtField"></td>	
+	</tr>
+	
+	<tr>
+		<td><label>Qty Discount</label></td>
+		<td><input type="text" name="qd" class="txtField" id="qd" onchange="refreshRate();"></td>	
 
+		<td><label>Remarks</label></td>
+		<td><input type="text" name="remarks" class="txtField"></td>
+	</tr>
 
-<td><label>Quantity</label></td>
-<td><input type="text" name="qty" required class="txtField" pattern="[0-9]+" title="Input a valid number"></td>
+	<tr>
+		<td><label>Special Discount</label></td>
+		<td><input type="text" name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
+		<td></td>
+		<td></td>
+	</tr>
 
+	<tr>
+		<td><label>Final Rate</label></td>
+		<td><input readonly type="text" class="txtField" id="final"></td>
+		<td></td>
+		<td></td>
+	</tr>
 
-<td><label>Address Part 2</label></td>
-<td><input type="text" name="address2" class="txtField"></td>
-</tr>
-
-<td><label>Rate</label></td>
-<td><input type="text" name="rate" class="txtField"></td>
-
-<td><label>Remarks</label></td>
-<td><input type="text" name="remarks" class="txtField"></td>
-</tr>
-
-</tr>
-
-<tr>
-
-<td colspan="4"><div align="center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></div></td>
-</tr>
+	<tr>
+		<td colspan="4"><div align="center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></div></td>
+	</tr>
 </table>
 </div>
 </form>
-</body></html>
+</body>
+</html>
 
 <?php
 }
