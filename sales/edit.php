@@ -40,10 +40,25 @@ var pickerOpts = { dateFormat:"d-mm-yy"};
 $( "#datepicker" ).datepicker(pickerOpts);
 
 });
+
+function refreshRate()
+{
+	var rate=document.getElementById("rate").value;
+	var cd=document.getElementById("cd").value;
+	var qd=document.getElementById("qd").value;
+	var sd=document.getElementById("sd").value;
+	
+	$('#final').val(rate-cd-qd-sd);
+
+	console.log(rate);
+	console.log(cd);
+	console.log(qd);
+	console.log(sd);
+}
 </script>
 </head>
 <body>
-<form name="frmUser" method="post" action="" autocomplete="off">
+<form name="frmUser" method="post" action="update.php" autocomplete="off">
 <input type="hidden" name="id" value="<?php echo $sale['id'];?>"/>
 <div style="width:100%;">
 
@@ -54,56 +69,111 @@ $( "#datepicker" ).datepicker(pickerOpts);
 </div>
 
 <br>
-<table border="0" cellpadding="10" cellspacing="0" width="80%" align="center" class="tblSaveForm">
+<table border="0" cellpadding="15" cellspacing="0" width="80%" align="center" style="float:center" class="tblSaveForm">
 	<tr class="tableheader">
-		<td colspan="4"><div align ="center"><b><font size="4">Edit Sale <?php echo $sale['id']; ?> </font><b></td>
+		<td colspan="4"><div align ="center"><b><font size="4">ADD NEW SALES ENTRY </font><b></td>
 	</tr>
 
 	<tr>
 		<td><label>Date</label></td>
-		<td><input type="text" name="date" class="txtField" id="datepicker" value="<?php echo date('d-m-Y', strtotime($sale['date']));?>"/></td>
+		<td><input type="text" id="datepicker" class="txtField" name="date" required value="<?php echo date('d-m-Y',strtotime($sale['date'])); ?>" /></td>
 
-		<td><label>Customer Phone</label></td>
-		<td><input type="text" name="customerPhone" class="txtField" value="<?php echo $sale['customer_phone']; ?>"></td>
+		<td><label>Bill No</label></td>
+		<td><input type="text" name="bill" class="txtField" value="<?php echo $sale['bill_no'];?>"></td>
 	</tr>
+
 	<tr>
 		<td><label>AR</label></td>
-		<td><input type="text" readonly name="client" class="txtField" value="<?php echo $clientMap[$sale['client']]; ?>"></td>
+		<td><select required name="client" class="txtField">
+				<option value = "">---Select---</option>																			<?php
+				foreach($clients as $client) 
+				{																													
+					if($sale['client'] == $client['id'])
+					{																												?>
+						<option selected value="<?php echo $client['id'];?>"><?php echo $client['name'];?></option>										<?php								
+					}
+					else
+					{																												?>
+						<option value="<?php echo $client['id'];?>"><?php echo $client['name'];?></option>										<?php		
+					}
+				}																													?>
+			</select>
+		</td>
 
-		<td><label>Bill No </label></td>
-		<td><input type="text" name="bill" class="txtField" value="<?php echo $sale['bill_no']; ?>"></td>
+		<td><label>Truck no</label></td>
+		<td><input type="text" name="truck" class="txtField" value="<?php echo $sale['truck_no'];?>"></td>
 	</tr>
-	<tr>
-		<td><label>Truck No </label></td>
-		<td><input type="text" name="truck" class="txtField" value="<?php echo $sale['truck_no']; ?>"></td>
-
-
-		<td><label>Customer Name</label></td>
-		<td><input type="text" name="customerName" class="txtField" value="<?php echo $sale['customer_name']; ?>"></td>
-	</tr>
+	
 	<tr>
 		<td><label>Product</label></td>
-		<td><input type="text" name="product" readonly class="txtField" value="<?php echo $productMap[$sale['product']];?>"></td>
+		<td><select required name="product" class="txtField">
+				<option value = "">---Select---</option>																			<?php
+				foreach($products as $product) 
+				{
+					if($sale['product'] == $product['id'])
+					{																												?>
+						<option selected value="<?php echo $product['id'];?>"><?php echo $product['name'];?></option>										<?php								
+					}
+					else
+					{																												?>
+						<option value="<?php echo $product['id'];?>"><?php echo $product['name'];?></option>										<?php		
+					}
+				}																													?>
+			</select>
+		</td>
 
-		<td><label>Address Part 1</label></td>
-		<td><input type="text" name="address1" class="txtField" value="<?php echo $sale['address1']; ?>"></td>
+		<td><label>Customer Phone</label></td>
+		<td><input type="text" name="customerPhone" class="txtField" value="<?php echo $sale['customer_phone'];?>"></td>
 	</tr>
+
 	<tr>
-		<td><label>QUANTITY</label></td>
-		<td><input type="text" name="qty" class="txtField" value="<?php echo $sale['qty']; ?>"></td>
+		<td><label>Quantity</label></td>
+		<td><input type="text" name="qty" required class="txtField" pattern="[0-9]+" title="Input a valid number" value="<?php echo $sale['qty'];?>"></td>
 
-		<td><label>Address Part 2</label></td>
-		<td><input type="text" name="address2" class="txtField" value="<?php echo $sale['address2']; ?>"></td>
+		<td><label>Customer Name</label></td>
+		<td><input type="text" name="customerName" class="txtField" value="<?php echo $sale['customer_name'];?>"></td>
 	</tr>
+
 	<tr>
 		<td><label>Rate</label></td>
-		<td><input type="text" name="rate" class="txtField" value="<?php echo $sale['rate']; ?>"></td>
+		<td><input type="text" name="rate" class="txtField" id="rate" value="<?php echo $sale['rate'];?>" onchange="refreshRate();"></td>
+
+		<td><label>Address Part 1</label></td>
+		<td><input type="text" name="address1" class="txtField" value="<?php echo $sale['address1'];?>"></td>
+	</tr>
+
+	<tr>
+		<td><label>Cash Discount</label></td>
+		<td><input type="text" name="cd" class="txtField" id="cd" value="<?php echo $sale['cd'];?>" onchange="refreshRate();"></td>	
+
+		<td><label>Address Part 2</label></td>
+		<td><input type="text" name="address2" class="txtField" value="<?php echo $sale['address2'];?>"></td>
+	</tr>
+	
+	<tr>
+		<td><label>Qty Discount</label></td>
+		<td><input type="text" name="qd" class="txtField" id="qd" value="<?php echo $sale['qd'];?>" onchange="refreshRate();"></td>	
 
 		<td><label>Remarks</label></td>
-		<td><input type="text" name="remarks" class="txtField" value="<?php echo $sale['remarks']; ?>"></td>
+		<td><input type="text" name="remarks" class="txtField" value="<?php echo $sale['remarks'];?>"></td>
 	</tr>
+
 	<tr>
-		<td colspan="4" align = "center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></td>
+		<td><label>Special Discount</label></td>
+		<td><input type="text" name="sd" class="txtField" id="sd" value="<?php echo $sale['sd'];?>" onchange="refreshRate();"></td>	
+		<td></td>
+		<td></td>
+	</tr>
+
+	<tr>
+		<td><label>Final Rate</label></td>
+		<td><input readonly type="text" class="txtField" id="final" value="<?php echo $sale['rate']-$sale['cd']-$sale['qd']-$sale['sd'];?>"></td>
+		<td></td>
+		<td></td>
+	</tr>
+
+	<tr>
+		<td colspan="4"><div align="center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></div></td>
 	</tr>
 </table>
 
