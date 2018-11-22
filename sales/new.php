@@ -4,7 +4,7 @@ if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");
-	$products= mysqli_query($con,"SELECT id,name FROM products ORDER BY name ASC");
+	$products= mysqli_query($con,"SELECT id,name FROM products WHERE isActive = 1 ORDER BY name ASC");
 ?>
 
 <html>
