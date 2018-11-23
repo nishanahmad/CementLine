@@ -3,31 +3,23 @@
 session_start();
 if(isset($_SESSION["user_name"]))
 {
-echo "LOGGED USER : ".$_SESSION["user_name"] ;	
+	echo "LOGGED USER : ".$_SESSION["user_name"] ;	
 
 	require '../connect.php';
 
 	$id = $_GET['client'];
 	if($id != 'all')
-	{
 		$result = mysqli_query($con,"SELECT * FROM sales  WHERE client=$id AND date >= CURDATE() order by bill_no asc ") or die(mysqli_error($con));				 	 	
-	}
 	else
 		$result = mysqli_query($con,"SELECT * FROM sales WHERE date >= CURDATE() order by bill_no asc  ") or die(mysqli_error($con));				 	 
 								
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
-	{
 		$clientMap[$client['id']] = $client['name'];
-	}	
 	
 	$products = mysqli_query($con,"SELECT id,name FROM products ORDER BY name ASC");	
 	foreach($products as $product)
-	{
-		$productNameMap[$product['id']] = $product['name'];
-	}		
-?>
-
+		$productNameMap[$product['id']] = $product['name'];																																													?>
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,14 +63,11 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 					<td>QTY</td>
 					<td>RATE</td>
 					<td>BILL NO</td>
-					<td class="desktop">CUST. NAME</td>
+					<td>CUST. NAME</td>
 					<td class="desktop">CUST. PHONE</td>
 					<td>REMARKS</td>
-				</tr>
-				<?php
-				
+				</tr>																																															<?php
 				$i=0;
-
 				$productMap = array();
 				$qty=0;
 				$total = 0;
@@ -94,7 +83,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 					{
 						$productMap[$productId] = $row["qty"];
 						$total = $total + $row["qty"];
-					}																																?>
+					}																																															?>
 					
 				<tr class="blue">
 					<td class="desktop"><a href="edit.php?id=<?php echo $row['id']; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>  
@@ -105,17 +94,15 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 					<td><?php echo $row['qty']; ?></td>
 					<td><?php echo $row['rate'] - $row['cd'] - $row['qd'] - $row['sd']; ?></td>
 					<td><?php echo $row['bill_no']; ?></td>
-					<td class="desktop"><?php echo $row['customer_name']; ?></td>
+					<td><?php echo $row['customer_name']; ?></td>
 					<td class="desktop"><?php echo $row['customer_phone']; ?></td>
 					<td><?php echo $row['remarks']; ?></td>
-				</tr>
-
-				<?php
-				$i++;
+				</tr>																																	<?php				
+					$i++;
 				}
 				foreach($productMap as $product=>$qty)
 				{																																		?>
-					<div align="center" style="font:20px bold ;color:#000000"><?php echo $productNameMap[$product].  " = " .$qty;?></div><?php
+					<div align="center" style="font:20px bold ;color:#000000"><?php echo $productNameMap[$product].  " = " .$qty;?></div>				<?php
 				}																																		?>    
 				<br>
 				<div align="center" style="font:20px bold;color:#000000">TOTAL = <?php echo $total;?></div>
@@ -124,10 +111,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 		<br><br><br>
 		<script src="bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
 	</body>
-</html>
-
-<?php
+</html>																																					<?php
 }
 else
-	header("Location:../index.php");
-?>
+	header("Location:../index.php");																													?>
