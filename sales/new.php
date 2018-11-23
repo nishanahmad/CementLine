@@ -9,7 +9,7 @@ if(isset($_SESSION["user_name"]))
 
 <html>
 <head>
-<title>CEMENT LINE SALES ENTRY</title>
+<title>New Sale</title>
 
 <meta charset="utf-8">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
@@ -55,7 +55,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 <br>
 <table border="0" cellpadding="15" cellspacing="0" width="80%" align="center" style="float:center" class="tblSaveForm">
 	<tr class="tableheader">
-		<td colspan="4"><div align ="center"><b><font size="4">ADD NEW SALES ENTRY </font><b></td>
+		<td colspan="4"><div align ="center"><b><font size="4">NEW SALE </font><b></td>
 	</tr>
 
 	<tr>
