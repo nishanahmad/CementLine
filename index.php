@@ -43,7 +43,7 @@ a{
    	<a href="products/list.php" class="btn lg ghost">PRODUCTS</a>
     <br><br><br>		
 	
-   	<a href="rate/new.php" class="btn lg ghost">RATE</a>
+   	<a href="rate_discounts/" class="btn lg ghost">RATE & DISCOUNTS</a>
     <br><br><br>			
 	
 	<a href="reports/" class="btn lg ghost">REPORTS</a>

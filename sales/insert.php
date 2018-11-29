@@ -12,9 +12,6 @@ if(isset($_SESSION["user_name"]))
 	$truck = $_POST['truck'];
 	$product = $_POST['product'];
 	$qty = $_POST['qty'];
-	$cd = $_POST['cd'];
-	$qd = $_POST['qd'];
-	$sd = $_POST['sd'];
 	$remarks = $_POST['remarks'];
 	$bill = $_POST['bill'];
 	$customerName = $_POST['customerName'];
@@ -23,19 +20,11 @@ if(isset($_SESSION["user_name"]))
 	$address2 = $_POST['address2'];
 	$entered_by = $_SESSION["user_name"];
 	$entered_on = date('Y-m-d H:i:s');	
-	
-	if(empty($rate))
-		$rate = 'null';
-	if(empty($cd))
-		$cd = 'null';	
-	if(empty($qd))
-		$qd = 'null';	
-	if(empty($sd))
-		$sd = 'null';		
+			
 
-	$sql="INSERT INTO sales (date, client, truck_no, product, qty, cd, qd, sd, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
+	$sql="INSERT INTO sales (date, client, truck_no, product, qty, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
 		 VALUES
-		 ('$sqlDate', '$client', '$truck', '$product', '$qty', $cd, $qd, $sd, '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
+		 ('$sqlDate', '$client', '$truck', '$product', '$qty', '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
 
 	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 	 
 		 
@@ -46,4 +35,4 @@ if(isset($_SESSION["user_name"]))
 else
 	header( "Location: ../index.php" );
 
-?> 
+?>

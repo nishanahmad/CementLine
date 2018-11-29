@@ -21,11 +21,10 @@ if(isset($_SESSION["user_name"]))
 	foreach($products as $product)
 		$productNameMap[$product['id']] = $product['name'];
 
-	$rates = mysqli_query($con,"SELECT * FROM rate WHERE date = CURDATE()");	
+	$rates = mysqli_query($con,"SELECT MAX(date),product,rate FROM rate GROUP BY product");	
 	foreach($rates as $rate)
 	{
 		$rateMap[$rate['product']] = $rate['rate'];
-		$discountMap[$rate['product']] = $rate['sd'];
 	}	
 		
 	$i=0;
