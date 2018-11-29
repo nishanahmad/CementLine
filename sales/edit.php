@@ -12,6 +12,15 @@ if(isset($_SESSION["user_name"]))
 
 	$query = mysqli_query($con,"SELECT * FROM sales WHERE id = $id ");
 	$sale= mysqli_fetch_array($query,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
+	
+	$date = $sale['date'];
+	$product = $sale['product'];
+	
+	$rateQuery = mysqli_query($con,"SELECT * FROM rate WHERE date = '$date' AND product = '$product'") or die(mysqli_error($con));				 	 
+	if(mysqli_num_rows($rateQuery) >0)
+		$rate= mysqli_fetch_array($rateQuery,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
+	else
+		$rate['rate'] = null;
 
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
@@ -34,11 +43,34 @@ if(isset($_SESSION["user_name"]))
 <link rel="stylesheet" href="../css/button.css">
 <script>
 $(function() {
+	var pickerOpts = { dateFormat:"d-mm-yy"}; 
+	$( "#datepicker" ).datepicker(pickerOpts);
 
-var pickerOpts = { dateFormat:"d-mm-yy"}; 
-	    	
-$( "#datepicker" ).datepicker(pickerOpts);
-
+	$("#datepicker").change(function(){
+		var product = $("#product").val();
+		$.ajax({
+			type: "POST",
+			url: "getRate.php",
+			data:'date='+$(this).val()+'&product='+product,
+			success: function(data){
+				$("#rate").val(data);
+				refreshRate();
+			}
+		});
+	});
+	
+	$("#product").change(function(){
+		var date = $("#datepicker").val();
+		$.ajax({
+			type: "POST",
+			url: "getRate.php",
+			data:'product='+$(this).val()+'&date='+date,
+			success: function(data){
+				$("#rate").val(data);
+				refreshRate();
+			}
+		});
+	});
 });
 
 function refreshRate()
@@ -49,11 +81,6 @@ function refreshRate()
 	var sd=document.getElementById("sd").value;
 	
 	$('#final').val(rate-cd-qd-sd);
-
-	console.log(rate);
-	console.log(cd);
-	console.log(qd);
-	console.log(sd);
 }
 </script>
 </head>
@@ -71,7 +98,7 @@ function refreshRate()
 <br>
 <table border="0" cellpadding="15" cellspacing="0" width="80%" align="center" style="float:center" class="tblSaveForm">
 	<tr class="tableheader">
-		<td colspan="4"><div align ="center"><b><font size="4">ADD NEW SALES ENTRY </font><b></td>
+		<td colspan="4"><div align ="center"><b><font size="4">Edit Sale </font><b></td>
 	</tr>
 
 	<tr>
@@ -106,7 +133,7 @@ function refreshRate()
 	
 	<tr>
 		<td><label>Product</label></td>
-		<td><select required name="product" class="txtField">
+		<td><select required name="product" id="product" class="txtField">
 				<option value = "">---Select---</option>																			<?php
 				foreach($products as $product) 
 				{
@@ -136,7 +163,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>Rate</label></td>
-		<td><input type="text" name="rate" class="txtField" id="rate" value="<?php echo $sale['rate'];?>" onchange="refreshRate();"></td>
+		<td><input type="text" name="rate" class="txtField" id="rate" value="<?php echo $rate['rate'];?>" onchange="refreshRate();"></td>
 
 		<td><label>Address Part 1</label></td>
 		<td><input type="text" name="address1" class="txtField" value="<?php echo $sale['address1'];?>"></td>
@@ -167,7 +194,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>Final Rate</label></td>
-		<td><input readonly type="text" class="txtField" id="final" value="<?php echo $sale['rate']-$sale['cd']-$sale['qd']-$sale['sd'];?>"></td>
+		<td><input readonly type="text" class="txtField" id="final" value="<?php echo $rate['rate']-$sale['cd']-$sale['qd']-$sale['sd'];?>"></td>
 		<td></td>
 		<td></td>
 	</tr>

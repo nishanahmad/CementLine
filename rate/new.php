@@ -19,6 +19,7 @@ if(isset($_SESSION["user_name"]))
 					<tr>
 						<th style="width:15%;text-align:center;">Product</th>
 						<th style="text-align:center;">Rate</th>
+						<th style="text-align:center;">Special Discount</th>
 					</tr>																																<?php 			
 					$count = 1;
 					while($count<10)
@@ -34,11 +35,12 @@ if(isset($_SESSION["user_name"]))
 								</select>					
 							</td>	
 							<td style="text-align:center;"><input type="text" name="rate<?php echo $count;?>"/></td>
+							<td style="text-align:center;"><input type="text" name="sd<?php echo $count;?>"/></td>
 						</tr>																															<?php				
 						$count++;
 					}																																	?>			
 					<tr>
-						<td colspan="2"><div align="center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></div></td>
+						<td colspan="3"><div align="center"><input type="submit" name="submit" value="Submit" class="btnSubmit"></div></td>
 					</tr>					
 				</table>
 				

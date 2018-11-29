@@ -8,7 +8,6 @@
 		$sqlDate = date("Y-m-d", strtotime($date));
 		$truck = $_POST['truck'];
 		$qty = $_POST['qty'];
-		$rate = $_POST['rate'];
 		$cd = $_POST['cd'];
 		$qd = $_POST['qd'];
 		$sd = $_POST['sd'];
@@ -29,12 +28,11 @@
 			$sd = 'null';		
 		
 		$update = mysqli_query($con,"UPDATE sales SET date='$sqlDate', truck_no='$truck', qty='$qty',
-									 rate = $rate, cd = $cd, qd = $qd, sd = $sd,  bill_no='$bill', 
+									 cd = $cd, qd = $qd, sd = $sd,  bill_no='$bill', 
 									 address1='$address1', address2='$address2', customer_name='$customerName', 
 									 customer_phone='$customerPhone', remarks='$remarks'
 									 WHERE id = $id") or die(mysqli_error($con));				 	 
 
 		  $url = 'todayList.php?client=all';
 		  header( "Location: $url" );
-	}
-?>		
+	}																																				?>

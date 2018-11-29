@@ -12,7 +12,6 @@ if(isset($_SESSION["user_name"]))
 	$truck = $_POST['truck'];
 	$product = $_POST['product'];
 	$qty = $_POST['qty'];
-	$rate = $_POST['rate'];
 	$cd = $_POST['cd'];
 	$qd = $_POST['qd'];
 	$sd = $_POST['sd'];
@@ -34,9 +33,9 @@ if(isset($_SESSION["user_name"]))
 	if(empty($sd))
 		$sd = 'null';		
 
-	$sql="INSERT INTO sales (date, client, truck_no, product, qty, rate, cd, qd, sd, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
+	$sql="INSERT INTO sales (date, client, truck_no, product, qty, cd, qd, sd, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
 		 VALUES
-		 ('$sqlDate', '$client', '$truck', '$product', '$qty', $rate, $cd, $qd, $sd, '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
+		 ('$sqlDate', '$client', '$truck', '$product', '$qty', $cd, $qd, $sd, '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
 
 	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 	 
 		 

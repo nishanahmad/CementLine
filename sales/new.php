@@ -17,11 +17,42 @@ if(isset($_SESSION["user_name"]))
 <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
 <script>
 $(function() {
+	var pickerOpts = { dateFormat:"d-mm-yy"}; 
+	$( "#datepicker" ).datepicker(pickerOpts);
 
-var pickerOpts = { dateFormat:"d-mm-yy"}; 
-	    	
-$( "#datepicker" ).datepicker(pickerOpts);
-
+	$("#datepicker").change(function(){
+		var product = $("#product").val();
+		$.ajax({
+			type: "POST",
+			url: "getRate.php",
+			data:'date='+$(this).val()+'&product='+product,
+			success: function(data){
+				console.log(data.split("-"));
+				var rate = data.split("-")[0];
+				var sd = data.split("-")[1];
+				$("#rate").val(rate);
+				$("#sd").val(sd);
+				refreshRate();
+			}
+		});
+	});
+	
+	$("#product").change(function(){
+		var date = $("#datepicker").val();
+		$.ajax({
+			type: "POST",
+			url: "getRate.php",
+			data:'product='+$(this).val()+'&date='+date,
+			success: function(data){
+				console.log(data.split("-"));
+				var rate = data.split("-")[0];
+				var sd = data.split("-")[1];
+				$("#rate").val(rate);
+				$("#sd").val(sd);
+				refreshRate();
+			}
+		});
+	});
 });
 
 function refreshRate()
@@ -32,12 +63,8 @@ function refreshRate()
 	var sd=document.getElementById("sd").value;
 	
 	$('#final').val(rate-cd-qd-sd);
-
-	console.log(rate);
-	console.log(cd);
-	console.log(qd);
-	console.log(sd);
 }
+
 </script>
 <link rel="stylesheet" type="text/css" href="../css/newEdit.css" />
 </head>
@@ -83,7 +110,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	
 	<tr>
 		<td><label>Product</label></td>
-		<td><select required name="product" class="txtField">
+		<td><select required name="product" id="product" class="txtField">
 				<option value = "">---Select---</option>																			<?php
 				foreach($products as $product) 
 				{																													?>
@@ -106,7 +133,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 
 	<tr>
 		<td><label>Rate</label></td>
-		<td><input type="text" name="rate" class="txtField" id="rate" onchange="refreshRate();"></td>
+		<td><input type="text" readonly name="rate" class="txtField" id="rate" onchange="refreshRate();"></td>
 
 		<td><label>Address Part 1</label></td>
 		<td><input type="text" name="address1" class="txtField"></td>
@@ -130,7 +157,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 
 	<tr>
 		<td><label>Special Discount</label></td>
-		<td><input type="text" name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
 		<td></td>
 		<td></td>
 	</tr>
