@@ -21,13 +21,19 @@ if(isset($_SESSION["user_name"]))
 	foreach($products as $product)
 		$productNameMap[$product['id']] = $product['name'];
 
-	//$rates = mysqli_query($con,"SELECT MAX(date),product,rate FROM rate GROUP BY product");	
 	$rates = mysqli_query($con,"SELECT * FROM rate ORDER BY date DESC") or die(mysqli_error($con));
 	foreach($rates as $rate)
 	{
 		if(!isset($rateMap[$rate['product']]))
 			$rateMap[$rate['product']] = $rate['rate'];
 	}	
+	
+	$discountMap = array();
+	$discounts = mysqli_query($con,"SELECT * FROM discounts WHERE type = 'wd' AND date = CURDATE()") or die(mysqli_error($con));
+	foreach($discounts as $discount)
+	{
+		$discountMap[$discount['product']] = $discount['amount'];
+	}		
 		
 	$i=0;
 	$productMap = array();
