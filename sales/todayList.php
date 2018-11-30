@@ -22,11 +22,11 @@ if(isset($_SESSION["user_name"]))
 		$productNameMap[$product['id']] = $product['name'];
 
 	//$rates = mysqli_query($con,"SELECT MAX(date),product,rate FROM rate GROUP BY product");	
-	$rates = mysqli_query($con,"SELECT product, rate FROM rate WHERE id IN ( SELECT MAX(date) FROM rate GROUP BY product )") or die(mysqli_error($con));				 	 	
+	$rates = mysqli_query($con,"SELECT * FROM rate ORDER BY date DESC") or die(mysqli_error($con));
 	foreach($rates as $rate)
 	{
-		var_dump($rate);
-		$rateMap[$rate['product']] = $rate['rate'];
+		if(!isset($rateMap[$rate['product']]))
+			$rateMap[$rate['product']] = $rate['rate'];
 	}	
 		
 	$i=0;
