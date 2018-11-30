@@ -117,27 +117,27 @@ if(isset($_SESSION["user_name"]))
 			<br/><br/>
 			<table class="rateTable">
 				<tr>
+					<th>Rate</th>
+					<th style="width:20%;">Discount</th>									
 					<th>Product</th>
 					<th>Qty</th>						
-					<th>Rate</th>
-					<th style="width:20%;">Discount</th>					
 				</tr>			
 			<?php				
 			foreach($rateMap as $product=>$rate)
 			{																																		?>
 				<tr>
+					<td><?php echo $rate.'/-';?></td>						
+					<td><?php if(isset($discountMap[$product])) echo $discountMap[$product].'/-';?></td>										
 					<td><?php echo $productNameMap[$product];?></td>
 					<td><?php if(isset($productMap[$product])) echo $productMap[$product];?></td>						
-					<td><?php echo $rate.'/-';?></td>						
-					<td><?php if(isset($discountMap[$product])) echo $discountMap[$product].'/-';?></td>						
 				</tr>
 								<?php
 			}?> 
 				<tr>
+					<th></th>						
+					<th></th>										
 					<th>Total</th>
 					<th><?php echo $total;?></th>
-					<th></th>						
-					<th></th>						
 				</tr>
 			</table>
 			</div>				

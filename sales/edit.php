@@ -16,11 +16,17 @@ if(isset($_SESSION["user_name"]))
 	$date = $sale['date'];
 	$product = $sale['product'];
 	
-	$rateQuery = mysqli_query($con,"SELECT * FROM rate WHERE date = '$date' AND product = '$product'") or die(mysqli_error($con));				 	 
+	$rateQuery = mysqli_query($con,"SELECT * FROM rate WHERE date <= '$date' AND product = '$product' ORDER BY date DESC LIMIT 1") or die(mysqli_error($con));				 	 
 	if(mysqli_num_rows($rateQuery) >0)
 		$rate= mysqli_fetch_array($rateQuery,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
 	else
 		$rate['rate'] = null;
+	
+	$wdQuery = mysqli_query($con,"SELECT * FROM discounts WHERE date = '$date' AND product = '$product' AND type='wd' ") or die(mysqli_error($con));				 	 
+	if(mysqli_num_rows($wdQuery) >0)
+		$wd= mysqli_fetch_array($wdQuery,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
+	else
+		$wd['amount'] = null;	
 
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
@@ -41,48 +47,6 @@ if(isset($_SESSION["user_name"]))
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="../css/button.css">
-<script>
-$(function() {
-	var pickerOpts = { dateFormat:"d-mm-yy"}; 
-	$( "#datepicker" ).datepicker(pickerOpts);
-
-	$("#datepicker").change(function(){
-		var product = $("#product").val();
-		$.ajax({
-			type: "POST",
-			url: "getRate.php",
-			data:'date='+$(this).val()+'&product='+product,
-			success: function(data){
-				$("#rate").val(data);
-				refreshRate();
-			}
-		});
-	});
-	
-	$("#product").change(function(){
-		var date = $("#datepicker").val();
-		$.ajax({
-			type: "POST",
-			url: "getRate.php",
-			data:'product='+$(this).val()+'&date='+date,
-			success: function(data){
-				$("#rate").val(data);
-				refreshRate();
-			}
-		});
-	});
-});
-
-function refreshRate()
-{
-	var rate=document.getElementById("rate").value;
-	var cd=document.getElementById("cd").value;
-	var qd=document.getElementById("qd").value;
-	var sd=document.getElementById("sd").value;
-	
-	$('#final').val(rate-cd-qd-sd);
-}
-</script>
 </head>
 <body>
 <form name="frmUser" method="post" action="update.php" autocomplete="off">
@@ -163,7 +127,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>Rate</label></td>
-		<td><input type="text" name="rate" class="txtField" id="rate" value="<?php echo $rate['rate'];?>" onchange="refreshRate();"></td>
+		<td><input type="text" readonly name="rate" class="txtField" id="rate" value="<?php echo $rate['rate'];?>" onchange="refreshRate();"></td>
 
 		<td><label>Address Part 1</label></td>
 		<td><input type="text" name="address1" class="txtField" value="<?php echo $sale['address1'];?>"></td>
@@ -187,7 +151,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>Wagon Discount</label></td>
-		<td><input type="text" readonly name="wd" class="txtField" id="wd" onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="wd" class="txtField" id="wd" value="<?php echo $wd['amount'];?>"></td>	
 		<td></td>
 		<td></td>
 	</tr>
@@ -204,8 +168,9 @@ function refreshRate()
 	</tr>
 </table>
 
-<br><br><br><br>	
+<br><br>
 <a href="delete.php?id=<?php echo $sale['id'];?>" style="float:right;width:50px;margin-right:150px;" class="btn btn-red" onclick="return confirm('Are you sure you want to permanently delete this entry ?')">DELETE</a>				
+<br><br>	
 </div>
 </form>
 </body>
