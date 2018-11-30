@@ -166,7 +166,6 @@ if(isset($_SESSION["user_name"]))
 							<th>Truck</th>
 							<th>Product</th>
 							<th>Qty</th>
-							<th>Rate</th>
 							<th>BILL NO</th>							
 							<th>CSTMR NAME</th>							
 							<th>Remarks</th>							
