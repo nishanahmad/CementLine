@@ -6,6 +6,7 @@ if(isset($_SESSION["user_name"]))
 	echo "LOGGED USER : ".$_SESSION["user_name"] ;	
 
 	require '../connect.php';
+	require '../functions/rate.php';
 
 	$id = $_GET['client'];
 	if($id != 'all')
@@ -55,9 +56,10 @@ if(isset($_SESSION["user_name"]))
 		}	
 
 		$mainMap[$i]['id'] = $row['id'];
-		$mainMap[$i]['date'] = date('d-m-Y', strtotime($row['date']));
+		$mainMap[$i]['date'] = $row['date'];
 		$mainMap[$i]['client'] = $clientMap[$row['client']];
 		$mainMap[$i]['truck'] = $row['truck_no'];
+		$mainMap[$i]['productId'] = $row['product'];
 		$mainMap[$i]['product'] = $productNameMap[$row['product']];
 		$mainMap[$i]['truck'] = $row['truck_no'];
 		$mainMap[$i]['qty'] = $row['qty'];
@@ -149,24 +151,33 @@ if(isset($_SESSION["user_name"]))
 					<td class="desktop">Date</td>
 					<td>AR</td>
 					<td class="desktop">TRUCK NO</td>
+					<td>RATE</td>
 					<td>PRODUCT</td>
 					<td>QTY</td>
-					<!--td>RATE</td-->
 					<td>BILL NO</td>
 					<td>CUST. NAME</td>
 					<td class="desktop">CUST. PHONE</td>
 					<td>REMARKS</td>
 				</tr>																																															<?php
 				foreach($mainMap as $index => $row) 
-				{																																																?>	
+				{
+					$rowRate = getRate($row['date'],$row['productId']);
+					if($rowRate == null)
+						$rowRate = 0;					
+					
+					$rowWD = getWD($row['date'],$row['productId']);
+					if($rowWD == null)
+						$rowWD = 0;
+
+					$finalRate = $rowRate - $rowWD;																											?>	
 					<tr class="blue">
 						<td class="desktop"><a href="edit.php?id=<?php echo $row['id']; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>  
-						<td class="desktop"><?php echo $row['date']; ?></td>
+						<td class="desktop"><?php echo date('d-m-Y',strtotime($row['date'])); ?></td>
 						<td><?php echo $row['client']; ?></td>
 						<td class="desktop"><?php echo $row['truck']; ?></td>
+						<td><?php echo $finalRate;?></td>
 						<td><?php echo $row['product']; ?></td>
 						<td><?php echo $row['qty']; ?></td>
-						<!--td><?php //echo $row['rate'] - $row['cd'] - $row['qd'] - $row['sd']; ?></td-->
 						<td><?php echo $row['bill']; ?></td>
 						<td><?php echo $row['name']; ?></td>
 						<td class="desktop"><?php echo $row['phone']; ?></td>
