@@ -123,12 +123,12 @@ if(isset($_SESSION["user_name"]))
 					<th style="width:20%;">Discount</th>					
 				</tr>			
 			<?php				
-			foreach($productMap as $product=>$qty)
+			foreach($rateMap as $product=>$rate)
 			{																																		?>
 				<tr>
 					<td><?php echo $productNameMap[$product];?></td>
-					<td><?php echo $qty;?></td>						
-					<td><?php if(isset($rateMap[$product])) echo $rateMap[$product].'/-';?></td>						
+					<td><?php if(isset($productMap[$product])) echo $productMap[$product];?></td>						
+					<td><?php echo $rate.'/-';?></td>						
 					<td><?php if(isset($discountMap[$product])) echo $discountMap[$product].'/-';?></td>						
 				</tr>
 								<?php
