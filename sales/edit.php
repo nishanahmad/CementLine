@@ -38,7 +38,10 @@ if(isset($_SESSION["user_name"]))
 	foreach($products as $product)
 	{
 		$productMap[$product['id']] = $product['name'];
-	}																																				?>
+	}	
+	
+	$finalRate = $rate['rate'] - $wd['amount'];
+	?>
 <html>
 <head>
 <title>Edit Sale <?php echo $sale['id']; ?></title>
@@ -55,7 +58,7 @@ if(isset($_SESSION["user_name"]))
 
 <div align="center" style="padding-bottom:5px;">
 	<a href="../index.php" class="link"><img alt='Home' title='Home' src='../images/home.png' width='50px' height='50px'/></a>&nbsp;&nbsp;
-	<a href="new.php" class="link"><img alt='Add' title='Add' src='../images/addNew.png' width='50px' height='50px'/></a>&nbsp;
+	<a href="new.php" class="link"><img alt='Add' title='Add' src='../images/addnew.png' width='50px' height='50px'/></a>&nbsp;
 	<a href="todayList.php?client=all" class="link"><img alt='List' title='List' src='../images/list_icon.jpg' width='50px' height='50px'/></a>		
 </div>
 
@@ -158,7 +161,7 @@ if(isset($_SESSION["user_name"]))
 
 	<tr>
 		<td><label>Final Rate</label></td>
-		<td><input readonly type="text" class="txtField" id="final"></td>
+		<td><input readonly type="text" class="txtField" id="final" value="<?php echo $finalRate;?>"></td>
 		<td></td>
 		<td></td>
 	</tr>
