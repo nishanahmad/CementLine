@@ -103,7 +103,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>Date</label></td>
-		<td><input type="text" id="datepicker" class="txtField" name="date" required value="<?php echo date('d-m-Y',strtotime($sale['date'])); ?>" /></td>
+		<td><input type="text" readonly  class="txtField" name="date" required value="<?php echo date('d-m-Y',strtotime($sale['date'])); ?>" /></td>
 
 		<td><label>Bill No</label></td>
 		<td><input type="text" name="bill" class="txtField" value="<?php echo $sale['bill_no'];?>"></td>
@@ -111,7 +111,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>AR</label></td>
-		<td><select required name="client" class="txtField">
+		<td><select disabled required name="client" class="txtField">
 				<option value = "">---Select---</option>																			<?php
 				foreach($clients as $client) 
 				{																													
@@ -133,7 +133,7 @@ function refreshRate()
 	
 	<tr>
 		<td><label>Product</label></td>
-		<td><select required name="product" id="product" class="txtField">
+		<td><select disabled required name="product" id="product" class="txtField">
 				<option value = "">---Select---</option>																			<?php
 				foreach($products as $product) 
 				{
@@ -171,23 +171,23 @@ function refreshRate()
 
 	<tr>
 		<td><label>Cash Discount</label></td>
-		<td><input type="text" name="cd" class="txtField" id="cd"  onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="cd" class="txtField" id="cd"  onchange="refreshRate();"></td>	
 
 		<td><label>Address Part 2</label></td>
 		<td><input type="text" name="address2" class="txtField" value="<?php echo $sale['address2'];?>"></td>
 	</tr>
 	
 	<tr>
-		<td><label>Qty Discount</label></td>
-		<td><input type="text" name="qd" class="txtField" id="qd"  onchange="refreshRate();"></td>	
+		<td><label>Special Discount</label></td>
+		<td><input type="text" readonly name="sd" class="txtField" id="sd"  onchange="refreshRate();"></td>	
 
 		<td><label>Remarks</label></td>
 		<td><input type="text" name="remarks" class="txtField" value="<?php echo $sale['remarks'];?>"></td>
 	</tr>
 
 	<tr>
-		<td><label>Special Discount</label></td>
-		<td><input type="text" name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
+		<td><label>Wagon Discount</label></td>
+		<td><input type="text" readonly name="wd" class="txtField" id="wd" onchange="refreshRate();"></td>	
 		<td></td>
 		<td></td>
 	</tr>

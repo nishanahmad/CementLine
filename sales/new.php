@@ -27,7 +27,10 @@ $(function() {
 			url: "getRate.php",
 			data:'date='+$(this).val()+'&product='+product,
 			success: function(data){
-				$("#rate").val(data);
+				var rate = data.split("-")[0];
+				var wd = data.split("-")[1];
+				$("#rate").val(rate);
+				$("#wd").val(wd);
 				refreshRate();
 			}
 		});
@@ -40,7 +43,10 @@ $(function() {
 			url: "getRate.php",
 			data:'product='+$(this).val()+'&date='+date,
 			success: function(data){
-				$("#rate").val(data);
+				var rate = data.split("-")[0];
+				var wd = data.split("-")[1];
+				$("#rate").val(rate);
+				$("#wd").val(wd);
 				refreshRate();
 			}
 		});
@@ -51,10 +57,10 @@ function refreshRate()
 {
 	var rate=document.getElementById("rate").value;
 	var cd=document.getElementById("cd").value;
-	var qd=document.getElementById("qd").value;
 	var sd=document.getElementById("sd").value;
+	var wd=document.getElementById("wd").value;
 	
-	$('#final').val(rate-cd-qd-sd);
+	$('#final').val(rate-cd-sd-wd);
 }
 
 </script>
@@ -141,7 +147,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	
 	<tr>
 		<td><label>Special Discount</label></td>
-		<td><input type="text" name="sd" class="txtField" id="qd" onchange="refreshRate();"></td>	
+		<td><input type="text" name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
 
 		<td><label>Remarks</label></td>
 		<td><input type="text" name="remarks" class="txtField"></td>
@@ -149,7 +155,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 
 	<tr>
 		<td><label>Wagon Discount</label></td>
-		<td><input type="text" readonly name="wd" class="txtField" id="sd" onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="wd" class="txtField" id="wd" onchange="refreshRate();"></td>	
 		<td></td>
 		<td></td>
 	</tr>
