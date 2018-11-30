@@ -21,7 +21,7 @@ if(isset($_SESSION["user_name"]))
 	foreach($products as $product)
 		$productNameMap[$product['id']] = $product['name'];
 
-	$rates = mysqli_query($con,"SELECT * FROM rate ORDER BY date DESC") or die(mysqli_error($con));
+	$rates = mysqli_query($con,"SELECT * FROM rate INNER JOIN products ON rate.product = products.id ORDER BY date DESC,products.name ASC") or die(mysqli_error($con));
 	foreach($rates as $rate)
 	{
 		if(!isset($rateMap[$rate['product']]))
