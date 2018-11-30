@@ -171,7 +171,7 @@ function refreshRate()
 
 	<tr>
 		<td><label>Cash Discount</label></td>
-		<td><input type="text" name="cd" class="txtField" id="cd" value="<?php echo $sale['cd'];?>" onchange="refreshRate();"></td>	
+		<td><input type="text" name="cd" class="txtField" id="cd"  onchange="refreshRate();"></td>	
 
 		<td><label>Address Part 2</label></td>
 		<td><input type="text" name="address2" class="txtField" value="<?php echo $sale['address2'];?>"></td>
@@ -179,7 +179,7 @@ function refreshRate()
 	
 	<tr>
 		<td><label>Qty Discount</label></td>
-		<td><input type="text" name="qd" class="txtField" id="qd" value="<?php echo $sale['qd'];?>" onchange="refreshRate();"></td>	
+		<td><input type="text" name="qd" class="txtField" id="qd"  onchange="refreshRate();"></td>	
 
 		<td><label>Remarks</label></td>
 		<td><input type="text" name="remarks" class="txtField" value="<?php echo $sale['remarks'];?>"></td>
@@ -187,14 +187,14 @@ function refreshRate()
 
 	<tr>
 		<td><label>Special Discount</label></td>
-		<td><input type="text" name="sd" class="txtField" id="sd" value="<?php echo $sale['sd'];?>" onchange="refreshRate();"></td>	
+		<td><input type="text" name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
 		<td></td>
 		<td></td>
 	</tr>
 
 	<tr>
 		<td><label>Final Rate</label></td>
-		<td><input readonly type="text" class="txtField" id="final" value="<?php echo $rate['rate']-$sale['cd']-$sale['qd']-$sale['sd'];?>"></td>
+		<td><input readonly type="text" class="txtField" id="final"></td>
 		<td></td>
 		<td></td>
 	</tr>
