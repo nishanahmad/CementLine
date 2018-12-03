@@ -10,24 +10,20 @@ if(isset($_SESSION["user_name"]))
 	if(!empty($_POST))
 	{
 		$date = date('Y-m-d',strtotime($_POST['date']));
-		$product = $_POST['product'];
-		$rate = (int)$_POST['rate'];
-		
-		$query = mysqli_query($con,"SELECT * FROM rate WHERE date = '$date' AND product = '$product'") or die(mysqli_error($con));	
-		if(mysqli_num_rows($query) >0 )
-		{
-			$row = mysqli_fetch_array($query,MYSQLI_ASSOC);
-			$id = (int)$row['id'];
-			$updateQuery ="UPDATE rate SET rate = $rate WHERE id = $id "; 
-			$update = mysqli_query($con, $updateQuery) or die(mysqli_error($con));	
-		}	
+		$product = (int)$_POST['product'];
+		$type = $_POST['type'];
+		$amount = (int)$_POST['amount'];
+		$client = $_POST['client'];
+
+		if(empty($client))
+			$client = 'null';
 		else
-		{
-			$insertQuery="INSERT INTO rate (date, product, rate)
-				 VALUES
-				 ('$date', '$product', $rate)";
-			$insert = mysqli_query($con, $insertQuery) or die(mysqli_error($con));				
-		}
+			$client = (int)$client;
+		
+		$insertQuery="INSERT INTO discounts (date, product, type, client, amount)
+			 VALUES
+			 ('$date', $product, '$type', $client, $amount)";
+		$insert = mysqli_query($con, $insertQuery) or die(mysqli_error($con));				
 
 		header( "Location: index.php");
 	}	
@@ -44,6 +40,21 @@ if(isset($_SESSION["user_name"]))
 		<script type="text/javascript" language="javascript" src="../js/jquery.js"></script>
 		<script type="text/javascript" language="javascript" src="../js/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		<script>
+		$(document).ready(function() {
+				
+				$('#type').on('change',function(){
+					if( $(this).val()=="wd"){
+						$("#client").removeAttr( "required");
+						$("#clientLabel").hide();
+					}
+					else{
+						$("#item").show();
+					}
+				});			
+			});	
+			
+		</script>   				
 	</head>
 	<section class="wrapper">
 		<div align="center" style="padding-bottom:5px;">
@@ -64,7 +75,7 @@ if(isset($_SESSION["user_name"]))
 						<div class="form-group">
 							<label class="col-sm-2 col-sm-2 control-label">Discount Type</label>
 							<div class="col-sm-6">
-								<select required name="type" class="form-control">
+								<select required name="type" id="type" class="form-control">
 									<option value = "">---Select---</option>													
 									<option value = "cd">Cash Discount</option>
 									<option value = "sd">Special Discount</option>
@@ -84,10 +95,10 @@ if(isset($_SESSION["user_name"]))
 								</select>
 							</div>
 						</div>					
-						<div class="form-group">
+						<div class="form-group" id="clientLabel">
 							<label class="col-sm-2 col-sm-2 control-label">Client</label>
 							<div class="col-sm-6">
-								<select required name="client" class="form-control">
+								<select required name="client" id="client" class="form-control">
 									<option value = "">---Select---</option>																			<?php
 									foreach($clients as $client) 
 									{																													?>

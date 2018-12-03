@@ -58,6 +58,7 @@ if(isset($_SESSION["user_name"]))
 		$mainMap[$i]['id'] = $row['id'];
 		$mainMap[$i]['date'] = $row['date'];
 		$mainMap[$i]['client'] = $clientMap[$row['client']];
+		$mainMap[$i]['clientId'] = $row['client'];
 		$mainMap[$i]['truck'] = $row['truck_no'];
 		$mainMap[$i]['productId'] = $row['product'];
 		$mainMap[$i]['product'] = $productNameMap[$row['product']];
@@ -168,8 +169,16 @@ if(isset($_SESSION["user_name"]))
 					$rowWD = getWD($row['date'],$row['productId']);
 					if($rowWD == null)
 						$rowWD = 0;
+					
+					$rowCD = getCD($row['date'],$row['productId'],$row['clientId']);
+					if($rowCD == null)
+						$rowCD = 0;					
+					
+					$rowSD = getSD($row['date'],$row['productId'],$row['clientId']);
+					if($rowSD == null)
+						$rowSD = 0;										
 
-					$finalRate = $rowRate - $rowWD;																											?>	
+					$finalRate = $rowRate - $rowWD - $rowCD - $rowSD;																											?>	
 					<tr class="blue">
 						<td class="desktop"><a href="edit.php?id=<?php echo $row['id']; ?>" class="link"><img alt='Edit' title='Edit' src='../images/edit.png' width='20px' height='20px' hspace='10' /></a></td>  
 						<td class="desktop"><?php echo date('d-m-Y',strtotime($row['date'])); ?></td>

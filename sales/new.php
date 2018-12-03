@@ -22,6 +22,7 @@ $(function() {
 
 	$("#datepicker").change(function(){
 		var product = $("#product").val();
+		var client = $("#client").val();
 		$.ajax({
 			type: "POST",
 			url: "getRate.php",
@@ -34,10 +35,31 @@ $(function() {
 				refreshRate();
 			}
 		});
+		$.ajax({
+			type: "POST",
+			url: "getCD.php",
+			data:'date='+$(this).val()+'&product='+product+'&client='+client,
+			success: function(data){
+				$("#cd").val(data);
+				refreshRate();
+			}
+		});		
+		$.ajax({
+			type: "POST",
+			url: "getSD.php",
+			data:'date='+$(this).val()+'&product='+product+'&client='+client,
+			success: function(data){
+				$("#sd").val(data);
+				refreshRate();
+			}
+		});		
 	});
+	
+	
 	
 	$("#product").change(function(){
 		var date = $("#datepicker").val();
+		var client = $("#client").val();
 		$.ajax({
 			type: "POST",
 			url: "getRate.php",
@@ -50,7 +72,51 @@ $(function() {
 				refreshRate();
 			}
 		});
+		$.ajax({
+			type: "POST",
+			url: "getCD.php",
+			data:'product='+$(this).val()+'&date='+date+'&client='+client,
+			success: function(data){
+				$("#cd").val(data);
+				refreshRate();
+			}
+		});				
+		$.ajax({
+			type: "POST",
+			url: "getSD.php",
+			data:'product='+$(this).val()+'&date='+date+'&client='+client,
+			success: function(data){
+				$("#sd").val(data);
+				refreshRate();
+			}
+		});						
 	});
+
+
+
+	
+	$("#client").change(function(){
+		var date = $("#datepicker").val();
+		var product = $("#product").val();
+		$.ajax({
+			type: "POST",
+			url: "getCD.php",
+			data:'client='+$(this).val()+'&date='+date+'&product='+product,
+			success: function(data){
+				$("#cd").val(data);
+				refreshRate();
+			}
+		});			
+		$.ajax({
+			type: "POST",
+			url: "getSD.php",
+			data:'client='+$(this).val()+'&date='+date+'&product='+product,
+			success: function(data){
+				$("#sd").val(data);
+				refreshRate();
+			}
+		});					
+	});	
 });
 
 function refreshRate()
@@ -92,8 +158,8 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	</tr>
 
 	<tr>
-		<td><label>AR</label></td>
-		<td><select required name="client" class="txtField">
+		<td><label>Client</label></td>
+		<td><select required name="client" id="client" class="txtField">
 				<option value = "">---Select---</option>																			<?php
 				foreach($clients as $client) 
 				{																													?>

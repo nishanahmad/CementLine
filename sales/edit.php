@@ -15,6 +15,7 @@ if(isset($_SESSION["user_name"]))
 	
 	$date = $sale['date'];
 	$product = $sale['product'];
+	$client = $sale['client'];
 	
 	$rateQuery = mysqli_query($con,"SELECT * FROM rate WHERE date <= '$date' AND product = '$product' ORDER BY date DESC LIMIT 1") or die(mysqli_error($con));				 	 
 	if(mysqli_num_rows($rateQuery) >0)
@@ -27,6 +28,18 @@ if(isset($_SESSION["user_name"]))
 		$wd= mysqli_fetch_array($wdQuery,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
 	else
 		$wd['amount'] = null;	
+	
+	$cdQuery = mysqli_query($con,"SELECT * FROM discounts WHERE date <= '$date' AND product = '$product' AND client = '$client' AND type='cd' ORDER BY date DESC LIMIT 1") or die(mysqli_error($con));				 	 
+	if(mysqli_num_rows($cdQuery) >0)
+		$cd= mysqli_fetch_array($cdQuery,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
+	else
+		$cd['amount'] = null;		
+	
+	$sdQuery = mysqli_query($con,"SELECT * FROM discounts WHERE date <= '$date' AND product = '$product' AND client = '$client' AND type='sd' ORDER BY date DESC LIMIT 1") or die(mysqli_error($con));				 	 
+	if(mysqli_num_rows($sdQuery) >0)
+		$sd= mysqli_fetch_array($sdQuery,MYSQLI_ASSOC) or die(mysqli_error($con));				 	 
+	else
+		$sd['amount'] = null;			
 
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
@@ -40,7 +53,7 @@ if(isset($_SESSION["user_name"]))
 		$productMap[$product['id']] = $product['name'];
 	}	
 	
-	$finalRate = $rate['rate'] - $wd['amount'];
+	$finalRate = $rate['rate'] - $wd['amount'] - $cd['amount'] - $sd['amount'];
 	?>
 <html>
 <head>
@@ -130,7 +143,7 @@ if(isset($_SESSION["user_name"]))
 
 	<tr>
 		<td><label>Rate</label></td>
-		<td><input type="text" readonly name="rate" class="txtField" id="rate" value="<?php echo $rate['rate'];?>" onchange="refreshRate();"></td>
+		<td><input type="text" readonly name="rate" class="txtField" id="rate" value="<?php echo $rate['rate'];?>"></td>
 
 		<td><label>Address Part 1</label></td>
 		<td><input type="text" name="address1" class="txtField" value="<?php echo $sale['address1'];?>"></td>
@@ -138,7 +151,7 @@ if(isset($_SESSION["user_name"]))
 
 	<tr>
 		<td><label>Cash Discount</label></td>
-		<td><input type="text" readonly name="cd" class="txtField" id="cd"  onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="cd" class="txtField" id="cd"  value="<?php echo $cd['amount'];?>"></td>	
 
 		<td><label>Address Part 2</label></td>
 		<td><input type="text" name="address2" class="txtField" value="<?php echo $sale['address2'];?>"></td>
@@ -146,7 +159,7 @@ if(isset($_SESSION["user_name"]))
 	
 	<tr>
 		<td><label>Special Discount</label></td>
-		<td><input type="text" readonly name="sd" class="txtField" id="sd"  onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="sd" class="txtField" id="sd"  value="<?php echo $sd['amount'];?>"></td>	
 
 		<td><label>Remarks</label></td>
 		<td><input type="text" name="remarks" class="txtField" value="<?php echo $sale['remarks'];?>"></td>
