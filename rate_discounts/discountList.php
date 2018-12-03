@@ -55,7 +55,7 @@ if(isset($_SESSION['user_name']))
 						<input type="text" data-column="3"  style="margin-left:10px;width:100px;" class="form-control" placeholder="Type">					
 					</form>	
 					<section style="margin-top:40px;">
-						<table class="table table-bordered table-striped col-md-offset-2" style="width:55%" id="discount">
+						<table class="table table-bordered table-striped col-md-offset-2" style="width:55%" id="discounts">
 							<thead class="cf">
 								<tr>
 									<th>Date</th>
@@ -88,13 +88,11 @@ if(isset($_SESSION['user_name']))
 		<script>
 		$(document).ready(function() {
 			
-			$.fn.dataTable.moment( 'DD-MM-YYYY' );			
-			
-			var table = $('#clients').DataTable({
+			var table = $('#discounts').DataTable({
 				"iDisplayLength": 10000
 			});
 				
-			$("#clients_filter").css("display","none");  // hiding global search box
+			$("#discounts_filter").css("display","none");  // hiding global search box
 			$('.form-control').on( 'keyup click', function () {   // for text boxes
 				var i =$(this).attr('data-column');  // getting column index
 				var v =$(this).val();  // getting search input value
