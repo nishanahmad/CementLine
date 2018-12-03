@@ -41,10 +41,15 @@ a{
     <br><br><br>		
 	
    	<a href="products/list.php" class="btn lg ghost">PRODUCTS</a>
-    <br><br><br>		
+    <br><br><br>																																		<?php
 	
-   	<a href="rate_discounts/" class="btn lg ghost">RATE & DISCOUNTS</a>
-    <br><br><br>			
+	if($_SESSION["user_name"] == 'MANJUSHA' || $_SESSION["user_name"] == 'nishan')
+	{																																					?>
+		<a href="rate_discounts/" class="btn lg ghost">RATE & DISCOUNTS</a>
+		<br><br><br>																																	<?php	
+	}																																					?>	
+
+
 	
 	<a href="reports/" class="btn lg ghost">REPORTS</a>
     <br><br><br>
