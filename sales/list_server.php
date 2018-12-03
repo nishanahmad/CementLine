@@ -3,6 +3,7 @@ session_start();
 if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
+	require '../functions/rate.php';
 
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
@@ -23,9 +24,9 @@ if(isset($_SESSION["user_name"]))
 		1 =>'date', 
 		2 =>'client', 
 		3 => 'truck_no',
-		4=> 'product',
-		5=> 'qty',
-		6=> 'rate',
+		4=> 'rate',
+		5=> 'product',
+		6=> 'qty',
 		7=> 'bill_no',
 		8=> 'customer_name',
 		9=> 'customer_phone',
@@ -131,9 +132,9 @@ if(isset($_SESSION["user_name"]))
 		$sql.=" AND truck_no LIKE '%".$requestData['columns'][3]['search']['value']."%' ";
 	}
 
-	if( !empty($requestData['columns'][4]['search']['value']) )
+	if( !empty($requestData['columns'][5]['search']['value']) )
 	{ 
-		$searchString = $requestData['columns'][4]['search']['value'];
+		$searchString = $requestData['columns'][5]['search']['value'];
 		$productList =  mysqli_query($con, "SELECT id FROM products WHERE name LIKE '%".$searchString."%' ") or die(mysqli_error($con).' LINE 114');	
 		$firstEntry  = true;
 		foreach($productList as $product)
@@ -148,29 +149,29 @@ if(isset($_SESSION["user_name"]))
 				$sql.=")";		
 	}
 
-	if( !empty($requestData['columns'][5]['search']['value']) )
-	{ 
-		$sql.=" AND qty LIKE '".$requestData['columns'][5]['search']['value']."%' ";
-	}
-
 	if( !empty($requestData['columns'][6]['search']['value']) )
 	{ 
-		$sql.=" AND bill_no LIKE '".$requestData['columns'][6]['search']['value']."%' ";
+		$sql.=" AND qty LIKE '".$requestData['columns'][6]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][7]['search']['value']) )
 	{ 
-		$sql.=" AND customer_name LIKE '".$requestData['columns'][7]['search']['value']."%' ";
+		$sql.=" AND bill_no LIKE '".$requestData['columns'][7]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][8]['search']['value']) )
 	{ 
-		$sql.=" AND customer_phone LIKE '".$requestData['columns'][8]['search']['value']."%' ";
+		$sql.=" AND customer_name LIKE '".$requestData['columns'][8]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][9]['search']['value']) )
+	{ 
+		$sql.=" AND customer_phone LIKE '".$requestData['columns'][9]['search']['value']."%' ";
+	}
+
+	if( !empty($requestData['columns'][10]['search']['value']) )
 	{ //cstl
-		$sql.=" AND remarks LIKE '".$requestData['columns'][9]['search']['value']."%' ";
+		$sql.=" AND remarks LIKE '".$requestData['columns'][10]['search']['value']."%' ";
 	}
 
 	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 148');	
@@ -184,12 +185,30 @@ if(isset($_SESSION["user_name"]))
 	$itemarray = array();
 	$total = 0;
 	while( $row=mysqli_fetch_array($query) ) {  // preparing an array
+
+		$rate = getRate($row['date'],$row['product']);
+		if($rate == null)
+			$rate = 0;					
+		
+		$WD = getWD($row['date'],$row['product']);
+		if($WD == null)
+			$WD = 0;
+		
+		$CD = getCD($row['date'],$row['product'],$row['client']);
+		if($CD == null)
+			$CD = 0;					
+		
+		$SD = getSD($row['date'],$row['product'],$row['client']);
+		if($SD == null)
+			$SD = 0;												
+		
 		$nestedData=array(); 
 
 		$nestedData[] = '<a href="edit.php?clicked_from=all_sales&id='.$row["id"].'">'.$row["id"].'</a>';
 		$nestedData[] = date('d-m-Y',strtotime($row['date']));
 		$nestedData[] = $clientMap[$row['client']];
 		$nestedData[] = $row["truck_no"];
+		$nestedData[] = $rate - $WD - $CD - $SD;
 		$nestedData[] = $productMap[$row['product']];
 		$nestedData[] = $row["qty"];
 			$total = $total + $row["qty"];
