@@ -49,9 +49,9 @@ if(isset($_SESSION['user_name']))
 						<form id="searchbox">
 							<table class="col-md-offset-3" style="width:40%">
 								<tr>
-									<td style="width:25%"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
-									<td style="width:50%;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
-									<td style="width:25%;"><input type="text" data-column="2"  class="form-control" placeholder="Rate"></td>	
+									<td style="width:25%;padding:2px;"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
+									<td style="width:50%;padding:2px;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
+									<td style="width:25%;padding:2px;"><input type="text" data-column="2"  class="form-control" placeholder="Rate"></td>	
 								</tr>	
 							</table>	
 						</form>																					

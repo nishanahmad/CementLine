@@ -53,11 +53,11 @@ if(isset($_SESSION['user_name']))
 						<form id="searchbox">
 							<table class="col-md-offset-2" style="width:55%">
 								<tr>
-									<td style="width:15%;"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
-									<td style="width:25%;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
-									<td style="width:30%;"><input type="text" data-column="2"  class="form-control" placeholder="Client"></td>				
-									<td style="width:20%;"><input type="text" data-column="3"  class="form-control" placeholder="Type"></td>				
-									<td style="width:10%;"><input type="text" data-column="4"  class="form-control" placeholder="Amount"></td>				
+									<td style="width:15%;padding:2px;"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
+									<td style="width:25%;padding:2px;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
+									<td style="width:30%;padding:2px;"><input type="text" data-column="2"  class="form-control" placeholder="Client"></td>				
+									<td style="width:20%;padding:2px;"><input type="text" data-column="3"  class="form-control" placeholder="Type"></td>				
+									<td style="width:10%;padding:2px;"><input type="text" data-column="4"  class="form-control" placeholder="Amount"></td>				
 								</tr>	
 							</table>	
 						</form>																					
