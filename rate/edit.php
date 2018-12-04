@@ -79,7 +79,7 @@ if(isset($_SESSION["user_name"]))
 							</div>
 						</div>					
 						<button type="submit" class="btn btn-primary" style="margin-left:200px;" tabindex="4">Update</button> 
-						<a href="index.php" class="btn btn-default" style="margin-left:10px;">Cancel</a>
+						<a href="list.php" class="btn btn-default" style="margin-left:10px;">Cancel</a>
 						<br/><br/>
 					</form>
 				</div>
