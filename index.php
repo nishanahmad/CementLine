@@ -45,7 +45,7 @@ a{
 	
 	if($_SESSION["user_name"] == 'MANJUSHA' || $_SESSION["user_name"] == 'nishan')
 	{																																					?>
-		<a href="rate_discounts/" class="btn lg ghost">RATE & DISCOUNTS</a>
+		<a href="discounts/" class="btn lg ghost">RATE & DISCOUNTS</a>
 		<br><br><br>																																	<?php	
 	}																																					?>	
 

@@ -28,7 +28,7 @@ if(isset($_SESSION["user_name"]))
 			$insert = mysqli_query($con, $insertQuery) or die(mysqli_error($con));				
 		}
 
-		header( "Location: index.php");
+		header( "Location: list.php");
 	}	
 ?>
 <html>

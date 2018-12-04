@@ -28,9 +28,9 @@ a{
   <div class="row">
   <h1>Rate & Discounts</h1>
   <br><br> 
-   	<a href="rateEdit.php" class="btn lg ghost">Update Rate</a>
+   	<a href="../rate/list.php" class="btn lg ghost">Rate List</a>
     <br><br><br>	
-   	<a href="discountEdit.php" class="btn lg ghost">Update Discount</a>
+   	<a href="list.php" class="btn lg ghost">Discount List</a>
     <br><br><br>		
 	
 	</div>

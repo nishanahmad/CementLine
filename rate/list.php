@@ -4,11 +4,7 @@ if(isset($_SESSION['user_name']))
 {
 	require '../connect.php';
     
-	$discounts = mysqli_query($con,"SELECT * FROM discounts ORDER BY date DESC") or die(mysqli_error($con));
-	
-	$clients = mysqli_query($con,"SELECT * FROM clients") or die(mysqli_error($con));
-	foreach($clients as $client)
-		$clientMap[$client['id']] = $client['name'];
+	$rates = mysqli_query($con,"SELECT * FROM rate ORDER BY date DESC") or die(mysqli_error($con));
 		
 	$products = mysqli_query($con,"SELECT * FROM products") or die(mysqli_error($con));
 	foreach($products as $product)
@@ -47,36 +43,35 @@ if(isset($_SESSION['user_name']))
 		<div class="row mt">
 			<div class="col-lg-12">
 				<div class="content-panel">
-					<h2 style="margin-left:45%;" ><i class="fa fa-gift"></i> Discounts</i></h2><br/>
-					<form id="searchbox" class="form-inline col-md-offset-2">
-						<input type="text" data-column="0"  style="margin-left:10px;" class="form-control" placeholder="Date">
-						<input type="text" data-column="1"  style="margin-left:10px;" class="form-control" placeholder="Product">	
-						<input type="text" data-column="2"  style="margin-left:10px;" class="form-control" placeholder="Client">					
-						<input type="text" data-column="3"  style="margin-left:10px;width:100px;" class="form-control" placeholder="Type">					
-					</form>	
+					<h2 style="margin-left:45%;" ><i class="fa fa-inr"></i> Rate</i></h2><br/>
+					<a href="edit.php" style="margin-left:45%;" class="btn btn-theme" >Update Rate</a>	
 					<section style="margin-top:40px;">
-						<table class="table table-bordered table-striped col-md-offset-2" style="width:55%" id="discounts">
+						<form id="searchbox">
+							<table class="col-md-offset-3" style="width:40%">
+								<tr>
+									<td style="width:25%"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
+									<td style="width:50%;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
+									<td style="width:25%;"><input type="text" data-column="2"  class="form-control" placeholder="Product"></td>	
+								</tr>	
+							</table>	
+						</form>																					
+						<table class="table table-bordered table-striped col-md-offset-3" style="width:40%" id="discounts">
 							<thead class="cf">
 								<tr>
-									<th>Date</th>
-									<th>Product</th>
-									<th>Client</th>
-									<th>Type</th>
-									<th style="max-width:60px;">Amount</th>
+									<th style="width:25%;">Date</th>
+									<th style="width:50%;">Product</th>
+									<th style="width:25%;">Rate</th>
 								</tr>
 							</thead>
 							<tbody>
+
 							<?php
-							foreach($discounts as $discount)
+							foreach($rates as $rate)
 							{																												?>
 								<tr>
-									<td><?php echo date('d-m-Y',strtotime($discount['date']));?></td>
-									<td><?php echo $productMap[$discount['product']];?></td>
-									<td><?php if(isset($clientMap[$discount['client']])) echo $clientMap[$discount['client']];?></td>
-									<td><?php if($discount['type'] == 'cd') echo 'Cash discount';
-											  else if($discount['type'] == 'sd') echo 'Special discount';
-											  else if($discount['type'] == 'wd') echo 'Wagon discount';?></td>
-									<td><?php echo $discount['amount'];?></td>																									
+									<td><?php echo date('d-m-Y',strtotime($rate['date']));?></td>
+									<td><?php echo $productMap[$rate['product']];?></td>
+									<td><?php echo $rate['rate'];?></td>																									
 								</tr>																								<?php
 							}																										?>
 							</tbody>
