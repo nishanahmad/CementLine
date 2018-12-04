@@ -13,7 +13,7 @@ if(isset($_SESSION['user_name']))
 																														?>
 <html>
 	<head>
-		<title>Clients</title>
+		<title>Rate List</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
 		<link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +51,7 @@ if(isset($_SESSION['user_name']))
 								<tr>
 									<td style="width:25%"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
 									<td style="width:50%;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
-									<td style="width:25%;"><input type="text" data-column="2"  class="form-control" placeholder="Product"></td>	
+									<td style="width:25%;"><input type="text" data-column="2"  class="form-control" placeholder="Rate"></td>	
 								</tr>	
 							</table>	
 						</form>																					
