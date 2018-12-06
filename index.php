@@ -40,6 +40,9 @@ a{
    	<a href="Target/" class="btn lg ghost">TARGET & POINTS</a>
     <br><br><br>		
 	
+   	<a href="redemption/" class="btn lg ghost">REDEMPTION</a>
+    <br><br><br>			
+	
    	<a href="products/list.php" class="btn lg ghost">PRODUCTS</a>
     <br><br><br>																																		<?php
 	
