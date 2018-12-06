@@ -24,13 +24,12 @@ if(isset($_SESSION["user_name"]))
 		$dateString = 'FULL';
 	}
 	
-	$arObjects =  mysqli_query($con,"SELECT id,name,mobile,shop_name,sap_code FROM ar_details WHERE isActive = 1 AND Type LIKE '%AR%' ORDER BY name ASC ") or die(mysqli_error($con));		 
+	$arObjects =  mysqli_query($con,"SELECT id,name,mobile,shop FROM clients WHERE isActive = 1 ORDER BY name ASC ") or die(mysqli_error($con));		 
 	foreach($arObjects as $ar)
 	{
 		$arMap[$ar['id']]['name'] = $ar['name'];
 		$arMap[$ar['id']]['mobile'] = $ar['mobile'];
-		$arMap[$ar['id']]['shop'] = $ar['shop_name'];
-		$arMap[$ar['id']]['sap'] = $ar['sap_code'];
+		$arMap[$ar['id']]['shop'] = $ar['shop'];
 	}				
 	
 	$prevMap = getPrevPoints(array_keys($arMap),$year,$month,$dateString);
@@ -39,19 +38,19 @@ if(isset($_SESSION["user_name"]))
 	
 	if($dateString == 'FULL')
 	{	
-		$targetObjects = mysqli_query($con,"SELECT ar_id, target, payment_perc,rate FROM target WHERE  month = '$month' AND Year='$year' AND target > 0 AND ar_id IN('$arIds')") or die(mysqli_error($con));		 
+		$targetObjects = mysqli_query($con,"SELECT client, target, payment_perc,rate FROM target WHERE  month = '$month' AND Year='$year' AND target > 0 AND client IN('$arIds')") or die(mysqli_error($con));		 
 		foreach($targetObjects as $target)
 		{
-			$targetMap[$target['ar_id']]['target'] = $target['target'];
-			$targetMap[$target['ar_id']]['rate'] = $target['rate'];
-			$targetMap[$target['ar_id']]['payment_perc'] = $target['payment_perc'];
+			$targetMap[$target['client']]['target'] = $target['target'];
+			$targetMap[$target['client']]['rate'] = $target['rate'];
+			$targetMap[$target['client']]['payment_perc'] = $target['payment_perc'];
 		}
 		
-		$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM nas_sale WHERE '$year' = year(`entry_date`) AND '$month' = month(`entry_date`) AND ar_id IN ('$arIds') GROUP BY ar_id") or die(mysqli_error($con));	
+		$sales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND product = 63 AND client IN ('$arIds') GROUP BY client") or die(mysqli_error($con));	
 		foreach($sales as $sale)
 		{
-			$arId = $sale['ar_id'];
-			$total = $sale['SUM(srp)'] + $sale['SUM(srh)'] + $sale['SUM(f2r)'] - $sale['SUM(return_bag)'];
+			$arId = $sale['client'];
+			$total = $sale['SUM(qty)'];
 			if(isset($targetMap[$arId]))
 			{
 				$points = round($total * $targetMap[$arId]['rate'],0);
@@ -82,18 +81,18 @@ if(isset($_SESSION["user_name"]))
 		$fromString = $from.'-'.$month.'-'.$year;		
 		$fromDate = date("Y-m-d",strtotime($fromString));			
 		
-		$specialTargetObjects = mysqli_query($con,"SELECT ar_id, fromDate, toDate,special_target FROM special_target WHERE  toDate = '$toDate' AND fromDate = '$fromDate' AND special_target >0 AND ar_id IN('$arIds')") or die(mysqli_error($con));		 
+		$specialTargetObjects = mysqli_query($con,"SELECT client, fromDate, toDate,special_target FROM special_target WHERE  toDate = '$toDate' AND fromDate = '$fromDate' AND special_target >0 AND client IN('$arIds')") or die(mysqli_error($con));		 
 		foreach($specialTargetObjects as $specialTarget)
 		{
-			$arId = $specialTarget['ar_id'];
+			$arId = $specialTarget['client'];
 			$start = $specialTarget['fromDate'];
 			$end = $specialTarget['toDate'];
-			$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM nas_sale WHERE entry_date >= '$start' AND entry_date <= '$end' AND ar_id = '$arId' GROUP BY ar_id") or die(mysqli_error($con));	
+			$sales = mysqli_query($con,"SELECT client,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM sales WHERE date >= '$start' AND date <= '$end' AND client = '$arId' GROUP BY client") or die(mysqli_error($con));	
 			foreach($sales as $sale)
 			{
-				$total = $sale['SUM(srp)'] + $sale['SUM(srh)'] + $sale['SUM(f2r)'] - $sale['SUM(return_bag)'];
+				$total = $sale['SUM(qty)'];
 				$totalWithExtra = $total;
-				$extraBags = mysqli_query($con,"SELECT ar_id,SUM(qty) FROM extra_bags WHERE date >= '$start' AND date <= '$end' AND ar_id = '$arId' GROUP BY ar_id") or die(mysqli_error($con));	
+				$extraBags = mysqli_query($con,"SELECT client,SUM(qty) FROM extra_bags WHERE date >= '$start' AND date <= '$end' AND client = '$arId' GROUP BY client") or die(mysqli_error($con));	
 				foreach($extraBags as $extraBag)
 					$totalWithExtra = $totalWithExtra + $extraBag['SUM(qty)'];
 
@@ -105,10 +104,10 @@ if(isset($_SESSION["user_name"]))
 		}		
 	}
 	
-	$currentRedemption = mysqli_query($con,"SELECT ar_id,SUM(points) FROM redemption WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND ar_id IN ('$arIds') GROUP BY ar_id") or die(mysqli_error($con));	
+	$currentRedemption = mysqli_query($con,"SELECT client,SUM(points) FROM redemption WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') GROUP BY client") or die(mysqli_error($con));	
 	foreach($currentRedemption as $redemption)
 	{
-		$redemptionMap[$redemption['ar_id']] = $redemption['SUM(points)'];
+		$redemptionMap[$redemption['client']] = $redemption['SUM(points)'];
 	}
 ?>
 <html>
@@ -205,10 +204,9 @@ function rerender2()
 		<table id="Points" class="responstable" style="width:70% !important">
 		<thead>
 			<tr>
-				<th style="width:20%;text-align:left;">AR</th>
+				<th style="width:25%;text-align:left;">AR</th>
 				<th style="width:12%;">Mobile</th>
 				<th style="width:25%;text-align:left;">Shop</th>
-				<th style="width:10%;">SAP</th>
 				<th>Opng Pnts</th>
 				<th>Current Pnts</th>	
 				<th>Redeemed Pnts</th>	
@@ -232,14 +230,13 @@ function rerender2()
 				
 				
 				<tr align="center">
-				<td style="text-align:left;"><?php echo $detailMap['name'];?></b></td>
-				<td><?php echo $detailMap['mobile'];?></b></td>
-				<td style="text-align:left;"><?php echo $detailMap['shop'];?></b></td>
-				<td><?php echo $detailMap['sap'];?></b></td>
-				<td><?php echo $prevMap[$arId]['prevPoints'] - $prevMap[$arId]['prevRedemption'];?></b></td>
-				<td><?php echo $pointMap[$arId]['points'];?></td>
-				<td><?php echo $redemptionMap[$arId];?></td>
-				<td><?php echo $prevMap[$arId]['prevPoints'] - $prevMap[$arId]['prevRedemption'] + $pointMap[$arId]['points'] - $redemptionMap[$arId];?></td>
+					<td style="text-align:left;"><?php echo $detailMap['name'];?></b></td>
+					<td><?php echo $detailMap['mobile'];?></b></td>
+					<td style="text-align:left;"><?php echo $detailMap['shop'];?></b></td>
+					<td><?php echo $prevMap[$arId]['prevPoints'] - $prevMap[$arId]['prevRedemption'];?></b></td>
+					<td><?php echo $pointMap[$arId]['points'];?></td>
+					<td><?php echo $redemptionMap[$arId];?></td>
+					<td><?php echo $prevMap[$arId]['prevPoints'] - $prevMap[$arId]['prevRedemption'] + $pointMap[$arId]['points'] - $redemptionMap[$arId];?></td>
 				</tr>																																							<?php
 				$openingTotal = $openingTotal + $prevMap[$arId]['prevPoints'] - $prevMap[$arId]['prevRedemption'];
 				$currentTotal = $currentTotal + $pointMap[$arId]['points'];
@@ -248,10 +245,9 @@ function rerender2()
 			}																																									?>
 		<thead>
 			<tr>
-				<th style="width:20%;text-align:left;"></th>
+				<th style="width:25%;text-align:left;"></th>
 				<th style="width:12%;"></th>
 				<th style="width:25%;text-align:left;"></th>
-				<th style="width:10%;"></th>
 				<th><?php echo $openingTotal;?></th>
 				<th><?php echo $currentTotal;?></th>	
 				<th><?php echo $redeemedTotal;?></th>	
@@ -347,13 +343,13 @@ function getPrevPoints($arList,$endYear,$endMonth,$dateString)
 	{
 		$start = $stDate['from_date'];
 		$end = $stDate['to_date'];
-		$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM nas_sale WHERE entry_date >= '$start' AND entry_date <= '$end' AND ar_id IN ('$arIds') GROUP BY ar_id") or die(mysqli_error($con));	
+		$sales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE date >= '$start' AND date <= '$end' AND product = 63 AND client IN ('$arIds') GROUP BY client") or die(mysqli_error($con));	
 		foreach($sales as $sale)
 		{
-			$arId = $sale['ar_id'];
-			$total = $sale['SUM(srp)'] + $sale['SUM(srh)'] + $sale['SUM(f2r)'] - $sale['SUM(return_bag)'];
+			$arId = $sale['client'];
+			$total = $sale['SUM(qty)'];
 			$totalWithExtra = $total;
-			$extraBags = mysqli_query($con,"SELECT ar_id,SUM(qty) FROM extra_bags WHERE date >= '$start' AND date <= '$end' AND ar_id = '$arId' GROUP BY ar_id") or die(mysqli_error($con));	
+			$extraBags = mysqli_query($con,"SELECT client,SUM(qty) FROM extra_bags WHERE date >= '$start' AND date <= '$end' AND client = '$arId' GROUP BY client") or die(mysqli_error($con));	
 			foreach($extraBags as $extraBag)
 				$totalWithExtra = $totalWithExtra + $extraBag['SUM(qty)'];
 
@@ -366,10 +362,10 @@ function getPrevPoints($arList,$endYear,$endMonth,$dateString)
 		}			
 	}
 	
-	$redemptionList = mysqli_query($con,"SELECT ar_id,SUM(points) FROM redemption WHERE  ( (YEAR(date) = '$endYear' AND MONTH(date) < '$endMonth') OR (YEAR(date) < '$endYear')) AND ar_id IN('$arIds') GROUP BY ar_id") or die(mysqli_error($con));		 	
+	$redemptionList = mysqli_query($con,"SELECT client,SUM(points) FROM redemption WHERE  ( (YEAR(date) = '$endYear' AND MONTH(date) < '$endMonth') OR (YEAR(date) < '$endYear')) AND client IN('$arIds') GROUP BY client") or die(mysqli_error($con));		 	
 	foreach($redemptionList as $redemption)
 	{
-		$arMap[$redemption['ar_id']]['prevRedemption'] = $arMap[$redemption['ar_id']]['prevRedemption'] + $redemption['SUM(points)'];			
+		$arMap[$redemption['client']]['prevRedemption'] = $arMap[$redemption['client']]['prevRedemption'] + $redemption['SUM(points)'];			
 	}
 
 	return $arMap;
