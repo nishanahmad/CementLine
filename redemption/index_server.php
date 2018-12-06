@@ -8,21 +8,21 @@ if(isset($_SESSION["user_name"]))
 		
 	$columns = array( 
 		0 =>'date', 
-		1 =>'ar_id', 
+		1 =>'client', 
 		2 => 'points',
 		3=> 'remarks'
 	);
 
 // getting total number records without any search
 
-	$sql = "SELECT id,date, ar_id,points,remarks";
+	$sql = "SELECT id,date, client,points,remarks";
 	$sql.=" FROM redemption";
 	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 26');	
 	$totalData = mysqli_num_rows($query);
 	$totalFiltered = $totalData;  // when there is no search parameter then total number rows = total number filtered rows.
 
 
-	$sql = "SELECT id,date, ar_id,points,remarks";
+	$sql = "SELECT id,date, client,points,remarks";
 	$sql.=" FROM redemption WHERE 1 = 1";
 
 
@@ -140,7 +140,7 @@ fclose($fp);
 */
 
 
-$arObjects =  mysqli_query($con,"SELECT id,name FROM ar_details ORDER BY name ASC ") or die(mysqli_error($con));		 
+$arObjects =  mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC ") or die(mysqli_error($con));		 
 foreach($arObjects as $ar)
 {
 	$arMap[$ar['id']] = $ar['name'];
@@ -153,7 +153,7 @@ while( $row=mysqli_fetch_array($query) )
 
 	//$nestedData[] = $row["id"];
 	$nestedData[] = date('d-m-Y',strtotime($row['date']));
-	$nestedData[] = $arMap[$row['ar_id']];
+	$nestedData[] = $arMap[$row['client']];
 	$nestedData[] = $row["points"];
 	$nestedData[] = $row["remarks"];
 

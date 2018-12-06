@@ -16,7 +16,7 @@ if(isset($_SESSION["user_name"]))
 
 	var_dump($_POST);
 	
- 	$insert ="INSERT INTO redemption (date, ar_id, points, remarks,entered_by,entered_on)
+ 	$insert ="INSERT INTO redemption (date, client, points, remarks,entered_by,entered_on)
 		 VALUES
 		 ('$sqlDate', '$arId', '$points' , '$remarks', '$entered_by', '$entered_on')";
 
