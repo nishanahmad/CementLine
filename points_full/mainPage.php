@@ -72,6 +72,7 @@ if(isset($_SESSION["user_name"]))
 	}
 	else
 	{
+		
 		$dateArray = explode(" to ",$dateString);
 		$from = $dateArray[0];
 		$to = $dateArray[1];
@@ -101,7 +102,8 @@ if(isset($_SESSION["user_name"]))
 				else
 					$pointMap[$arId]['points'] = 0;			
 			}
-		}		
+		}
+		
 	}
 	
 	$currentRedemption = mysqli_query($con,"SELECT client,SUM(points) FROM redemption WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') GROUP BY client") or die(mysqli_error($con));	
