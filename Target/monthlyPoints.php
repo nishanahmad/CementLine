@@ -64,6 +64,13 @@ if(isset($_SESSION["user_name"]))
 	{
 		$otherSaleMap[$sale['client']] = $sale['SUM(qty)'];
 	}
+	
+	$extraBagsMap = array();
+	$extraBags = mysqli_query($con,"SELECT client,SUM(qty) FROM extra_bags WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') AND product IN('$corIds') GROUP BY client") or die(mysqli_error($con));
+	foreach($extraBags as $extraBag)
+	{
+		$extraBagsMap[$extraBag['client']] = $extraBag['SUM(qty)'];
+	}	
 
 	$sales = mysqli_query($con,"SELECT client,SUM(qty) FROM sales WHERE '$year' = year(`date`) AND '$month' = month(`date`) AND client IN ('$arIds') AND product IN('$corIds') GROUP BY client") or die(mysqli_error($con));		
 	$mainArray = array();
@@ -71,6 +78,9 @@ if(isset($_SESSION["user_name"]))
 	{
 		$arId = $sale['client'];
 		$total = $sale['SUM(qty)'];
+		if(isset($extraBagsMap[$arId]))
+			$total = $total + $extraBagsMap[$arId];
+			
 		if(isset($targetMap[$arId]))
 		{
 			$points = round($total * $targetMap[$arId]['rate'],0);
@@ -78,11 +88,17 @@ if(isset($_SESSION["user_name"]))
 			$point_perc = getPointPercentage($actual_perc,$year,$month);			 
 			$achieved_points = round($points * $point_perc/100,0);
 			
-			if($total > 0)		
+			if($total > 0)
+			{
 				$payment_points = round($achieved_points * $targetMap[$arId]['payment_perc']/100,0);
+				if(isset($extraBagsMap[$arId]))
+					$payment_points = $payment_points - $extraBagsMap[$arId];
+			}	
 			else
 				$payment_points = 0;			
 
+			if(isset($extraBagsMap[$arId]))
+				$total = $total - $extraBagsMap[$arId];
 			$mainArray[$arId]['actual_sale'] = $total;
 			$mainArray[$arId]['points'] = $points;
 			$mainArray[$arId]['actual_perc'] = $actual_perc;
@@ -182,8 +198,8 @@ function rerender()
 				<th>Points</th>
 				<th>Actual%</th>	
 				<th>Point%</th>	
-				<th>Payment%</th>	
-				<th>Achieved Pnts</th>
+				<!--th>Payment%</th>	
+				<th>Achieved Pnts</th-->
 				<th>Points</th>	
 			</tr>
 		</thead>	
@@ -227,8 +243,8 @@ function rerender()
 					<td><?php echo $mainArray[$arId]['points'];?></td>
 					<td><?php echo $mainArray[$arId]['actual_perc'].'%';?></td>
 					<td><?php echo $mainArray[$arId]['point_perc'].'%';?></td>
-					<td><?php echo $payment_perc;?></td>
-					<td><?php echo $mainArray[$arId]['achieved_points'];?></td>
+					<!--td><?php //echo $payment_perc;?></td>
+					<td><?php //echo $mainArray[$arId]['achieved_points'];?></td-->
 					<td><?php echo '<b>'.$mainArray[$arId]['payment_points'].'</b>';?></td>
 				</tr>																															<?php
 			}																																	?>
@@ -244,8 +260,8 @@ function rerender()
 					<th><?php echo $totalPoints;?></th>
 					<th><?php if($totalTarget >0) echo round($totalSale/$totalTarget*100,1); else echo '0'?>%</th>
 					<th></th>	
-					<th></th>	
-					<th></th>
+					<!--th></th>	
+					<th></th-->
 					<th><?php echo $totalPaymentPoints;?></th>
 				</tr>	
 			</thead>	
