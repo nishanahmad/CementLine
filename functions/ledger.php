@@ -18,34 +18,6 @@ function getTargets($year,$arId)
 }
 
 
-
-function getSpecialTargets($year,$arId)
-{
-	require '../connect.php';
-	
-	$specialTargetMap = array();
-	$specialTargetObjects = mysqli_query($con,"SELECT * FROM special_target WHERE YEAR(fromDate)='$year' AND client = '$arId' ORDER BY fromDate") or die(mysqli_error($con));		 
-	foreach($specialTargetObjects as $target)
-	{
-		$month = (int)date("m",strtotime($target['fromDate']));
-		$from = date("Y-m-d",strtotime($target['fromDate']));
-		$to = date("Y-m-d",strtotime($target['toDate']));
-		$dateString = date('d',strtotime($target['fromDate'])). ' to ' .date('d',strtotime($target['toDate']));
-		$specialTargetMap[$month][$dateString]['target'] = $target['special_target'];
-		
-		$sql = mysqli_query($con, "SELECT client,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM sales WHERE entry_date >= '$from' AND entry_date <= '$to' AND client = '$arId'" ) or die(mysqli_error($con));
-		$sale = mysqli_fetch_array($sql,MYSQLI_ASSOC);
-		$specialTargetMap[$month][$dateString]['sale'] = $sale['SUM(srp)'] + $sale['SUM(srh)'] + $sale['SUM(f2r)'] - $sale['SUM(return_bag)'];
-		
-		$sql = mysqli_query($con, "SELECT SUM(qty) FROM extra_bags WHERE date >= '$from' AND date <= '$to' AND client = '$arId'" ) or die(mysqli_error($con));
-		$extraBags = mysqli_fetch_array($sql,MYSQLI_ASSOC);		
-		$specialTargetMap[$month][$dateString]['extra'] =  $extraBags['SUM(qty)'];
-	}	
-	
-	return $specialTargetMap;
-}	
-
-
 function getRedemptions($year,$arId)
 {
 	require '../connect.php';
@@ -67,7 +39,7 @@ function getSales($year,$arId)
 	require '../connect.php';
 	
 	$saleMap = array();	
-	$salesList = mysqli_query($con, "SELECT SUM(qty),MONTH(date) FROM sales WHERE YEAR(date) = '$year' AND client = '$arId' GROUP BY MONTH(date) ORDER BY MONTH(date) ASC" ) or die(mysqli_error($con));
+	$salesList = mysqli_query($con, "SELECT SUM(qty),MONTH(date) FROM sales WHERE YEAR(date) = '$year' AND client = '$arId' AND product = 63 GROUP BY MONTH(date) ORDER BY MONTH(date) ASC" ) or die(mysqli_error($con));
 	foreach($salesList as $sale) 
 	{
 		$saleMap[$sale['MONTH(date)']] = $sale['SUM(qty)'];
@@ -77,8 +49,22 @@ function getSales($year,$arId)
 }
 
 
+function getExtraBags($year,$arId)
+{
+	require '../connect.php';
+	
+	$extraBagsMap = array();	
+	$extraBagsList = mysqli_query($con, "SELECT SUM(qty),MONTH(date) FROM extra_bags WHERE YEAR(date) = '$year' AND client = '$arId' AND product = 63 GROUP BY MONTH(date) ORDER BY MONTH(date) ASC" ) or die(mysqli_error($con));
+	foreach($extraBagsList as $extraBags) 
+	{
+		$extraBagsMap[$extraBags['MONTH(date)']] = $extraBags['SUM(qty)'];
+	}
+			
+	return $extraBagsMap;
+}
 
-function getPoints($year,$saleMap,$isActive,$targetMap)
+
+function getPoints($year,$saleMap,$extraBagsMap,$isActive,$targetMap)
 {
 	require '../connect.php';
 	require 'targetFormula.php';
@@ -86,6 +72,9 @@ function getPoints($year,$saleMap,$isActive,$targetMap)
 	$pointsMap = array();
 	foreach($saleMap as $month => $total)
 	{
+		if(isset($extraBagsMap[$month]))
+			$total = $total + $extraBagsMap[$month];
+		
 		$pointsMap[$month]['points'] = null;
 		$pointsMap[$month]['actual_perc'] = null;
 		$pointsMap[$month]['point_perc'] = null;
@@ -100,7 +89,11 @@ function getPoints($year,$saleMap,$isActive,$targetMap)
 			$achieved_points = round($points * $point_perc/100,0);
 			
 			if($total > 0)		
-				$payment_points = round($achieved_points * $targetMap[$month]['payment_perc']/100,0);
+			{
+				$payment_points = round($achieved_points * $targetMap[$month]['payment_perc']/100,0);				
+				if(isset($extraBagsMap[$month]))
+					$payment_points = $payment_points - $extraBagsMap[$month];
+			}
 			else
 				$payment_points = 0;			
 
@@ -123,7 +116,7 @@ function getOpeningPoints($year,$arId,$isActive)
 	$opening = 0;
 	if($year == 2018)
 	{
-		$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND client = '$arId' ") or die(mysqli_error($con));		 
+		$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE month(date)<10 AND client = '$arId' ") or die(mysqli_error($con));		 
 		foreach($redemptionObjects as $redemption)
 		{
 			$opening = $opening - $redemption['points'];
@@ -135,7 +128,6 @@ function getOpeningPoints($year,$arId,$isActive)
 		while($i >= 2018)
 		{
 			$targetMap = getTargets($year,$arId);
-			$specialTargetMap = getSpecialTargets($year,$arId);
 			$redemptionMap = getRedemptions($year,$arId);
 			$saleMap = getSales($year,$arId);
 			
@@ -155,12 +147,6 @@ function getOpeningPoints($year,$arId,$isActive)
 					
 					$opening = $opening + $payment_points;
 				}		
-			}			
-			
-			foreach($specialTargetMap as $month => $value)
-			{
-				if($value['sale'] + $value['extra'] >= $value['target'])
-					$opening = $opening + $value['sale'];
 			}			
 			
 			foreach($redemptionMap as $redemption)

@@ -19,10 +19,10 @@ if(isset($_SESSION["user_name"]))
 	$isActive = $client['isActive'];
 	
 	$targetMap = getTargets($urlYear,$urlId);
-	$specialTargetMap = getSpecialTargets($urlYear,$urlId);
 	$redemptionMap = getRedemptions($urlYear,$urlId);
 	$saleMap = getSales($urlYear,$urlId);
-	$pointsMap = getPoints($urlYear,$saleMap,$isActive,$targetMap);
+	$extraBagsMap = getExtraBags($urlYear,$urlId);
+	$pointsMap = getPoints($urlYear,$saleMap,$extraBagsMap,$isActive,$targetMap);
 	$openingPoints = getOpeningPoints($urlYear,$urlId,$isActive);	
 ?>
 <html>
@@ -114,10 +114,10 @@ if(isset($_SESSION["user_name"]))
 						<div class="form-group">
 							<div class="col-sm-6 col-md-offset-4">
 								<select id="year" name="year" onchange="return rerender();">																							<?php	
-								$yearList = mysqli_query($con, "SELECT DISTINCT YEAR(date) FROM nas_sale ORDER BY date DESC" ) or die(mysqli_error($con));	
+								$yearList = mysqli_query($con, "SELECT DISTINCT year FROM target ORDER BY year DESC" ) or die(mysqli_error($con));	
 								foreach($yearList as $yearObj) 
 								{							
-									$year = $yearObj['YEAR(date)'];																				?>			
+									$year = $yearObj['year'];																				?>			
 									<option <?php if($urlYear == $year) echo 'selected';?> value="<?php echo $year;?>"><?php echo $year;?></option>															<?php	
 								}																																									?>	
 								</select>												
@@ -143,28 +143,7 @@ if(isset($_SESSION["user_name"]))
 										<td colspan="2" style="text-align:center;">OPENING</td>
 										<td><?php echo $openingPoints;?></td>
 										<td></td>
-									</tr>																														<?php
-									if(isset($specialTargetMap[$month]))
-									{
-										foreach($specialTargetMap[$month] as $dateString => $subArray)
-										{																															?>
-											<tr>
-												<td style="text-align:left;"><?php echo getMonth($month).' '.$dateString;?></td>
-												<td><?php echo $subArray['target'];?></td>
-												<td><?php echo $subArray['sale'];?></td>
-												<td><?php 
-													if($subArray['sale'] + $subArray['extra'] >= $subArray['target']) 
-													{
-														$openingPoints = $openingPoints + $subArray['sale'];
-														echo $subArray['sale'];
-													}	
-													else 
-														echo '0';?>
-												</td>
-												<td></td>
-											</tr>																												<?php			
-										}	
-									}																															?>
+									</tr>
 									<tr>
 										<td style="text-align:left;"><?php echo getMonth($month).' Full';?></td>
 										<td><?php echo $target['target'];?></td>
