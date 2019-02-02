@@ -30,7 +30,7 @@ function getPrevPoints($arList,$endYear,$endMonth)
 			{
 				foreach($monthArray as $month => $detailArray)
 				{
-					if($month < $endMonth && $year == $endYear)
+					if( $year < $endYear || ($month < $endMonth && $year == $endYear))
 					{
 						if(isset($saleMap[$arId][$year][$month]))
 						{
