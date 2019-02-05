@@ -116,7 +116,7 @@ function getOpeningPoints($year,$arId,$isActive)
 	$opening = 0;
 	if($year == 2018)
 	{
-		$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND ar_id = '$arId' ") or die(mysqli_error($con));		 
+		$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND client = '$arId' ") or die(mysqli_error($con));		 
 		foreach($redemptionObjects as $redemption)
 		{
 			$opening = $opening - $redemption['points'];
@@ -128,7 +128,7 @@ function getOpeningPoints($year,$arId,$isActive)
 		{
 			if($year == 2018)
 			{
-				$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND ar_id = '$arId' ") or die(mysqli_error($con));		 
+				$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND client = '$arId' ") or die(mysqli_error($con));		 
 				foreach($redemptionObjects as $redemption)
 				{
 					$opening = $opening - $redemption['points'];
@@ -137,7 +137,6 @@ function getOpeningPoints($year,$arId,$isActive)
 			else
 			{
 				$targetMap = getTargets($year-1,$arId);
-				$specialTargetMap = getSpecialTargets($year-1,$arId);
 				$redemptionMap = getRedemptions($year-1,$arId);
 				$saleMap = getSales($year-1,$arId);
 				
@@ -157,17 +156,6 @@ function getOpeningPoints($year,$arId,$isActive)
 							
 							$opening = $opening + $payment_points;						
 					}		
-				}			
-				
-				foreach($specialTargetMap as $month => $subArray)
-				{
-					foreach($subArray as $dateString => $value)
-					{
-						if($value['sale'] + $value['extra'] >= $value['target'])
-						{
-							$opening = $opening + $value['sale'];					
-						}
-					}
 				}			
 				
 				foreach($redemptionMap as $subArray)
