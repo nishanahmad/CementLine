@@ -90,7 +90,7 @@ function getPoints($year,$saleMap,$extraBagsMap,$isActive,$targetMap)
 			
 			if($total > 0)		
 			{
-				$payment_points = round($achieved_points * $targetMap[$month]['payment_perc']/100,0);				
+				$payment_points = round($achieved_points * $targetMap[$month]['payment_perc']/100,0);		
 				if(isset($extraBagsMap[$month]))
 					$payment_points = $payment_points - $extraBagsMap[$month];
 			}
@@ -116,7 +116,7 @@ function getOpeningPoints($year,$arId,$isActive)
 	$opening = 0;
 	if($year == 2018)
 	{
-		$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND client = '$arId' ") or die(mysqli_error($con));		 
+		$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)='$year' AND MONTH(date) = 9 AND client = '$arId' ") or die(mysqli_error($con));		 
 		foreach($redemptionObjects as $redemption)
 		{
 			$opening = $opening - $redemption['points'];
@@ -124,49 +124,43 @@ function getOpeningPoints($year,$arId,$isActive)
 	}
 	else if($year > 2018)
 	{
-		while($year >= 2018)
+		while($year > 2018)
 		{
-			if($year == 2018)
+			$targetMap = getTargets($year-1,$arId);
+			$redemptionMap = getRedemptions($year-1,$arId);
+			$saleMap = getSales($year-1,$arId);
+			
+			foreach($saleMap as $month => $total)
 			{
-				$redemptionObjects = mysqli_query($con,"SELECT * FROM redemption WHERE YEAR(date)<'$year' AND client = '$arId' ") or die(mysqli_error($con));		 
-				foreach($redemptionObjects as $redemption)
+				if(isset($extraBagsMap[$month]))
+					$total = $total + $extraBagsMap[$month];					
+				if(isset($targetMap[$month]['target']) && $isActive && $targetMap[$month]['target'] >0)
+				{
+					$points = round($total * $targetMap[$month]['rate'],0);
+					$actual_perc = round($total * 100 / $targetMap[$month]['target'],0);
+					$point_perc = getPointPercentage($actual_perc,$year,$month);			 
+					$achieved_points = round($points * $point_perc/100,0);
+					
+					if($total > 0)		
+					{
+						$payment_points = round($achieved_points * $targetMap[$month]['payment_perc']/100,0);		
+						if(isset($extraBagsMap[$month]))
+							$payment_points = $payment_points - $extraBagsMap[$month];
+					}
+					else
+						$payment_points = 0;			
+
+					$opening = $opening + $payment_points;
+				}		
+			}			
+			
+			foreach($redemptionMap as $subArray)
+			{
+				foreach($subArray as $index => $redemption)
 				{
 					$opening = $opening - $redemption['points'];
-				}				
-			}
-			else
-			{
-				$targetMap = getTargets($year-1,$arId);
-				$redemptionMap = getRedemptions($year-1,$arId);
-				$saleMap = getSales($year-1,$arId);
-				
-				foreach($saleMap as $month => $total)
-				{
-					if(isset($targetMap[$month]['target']) && $isActive && $targetMap[$month]['target'] >0)
-					{
-							$points = round($total * $targetMap[$month]['rate'],0);
-							$actual_perc = round($total * 100 / $targetMap[$month]['target'],0);
-							$point_perc = getPointPercentage($actual_perc,$year-1,$month);			 
-							$achieved_points = round($points * $point_perc/100,0);
-							
-							if($total > 0)		
-								$payment_points = round($achieved_points * $targetMap[$month]['payment_perc']/100,0);
-							else
-								$payment_points = 0;			
-							
-							$opening = $opening + $payment_points;						
-					}		
-				}			
-				
-				foreach($redemptionMap as $subArray)
-				{
-					foreach($subArray as $index => $redemption)
-					{
-						$opening = $opening - $redemption['points'];
-					}
-						
-				}				
-			}
+				}	
+			}	
 
 			$year--;
 		}
