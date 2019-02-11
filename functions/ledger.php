@@ -129,6 +129,7 @@ function getOpeningPoints($year,$arId,$isActive)
 			$targetMap = getTargets($year-1,$arId);
 			$redemptionMap = getRedemptions($year-1,$arId);
 			$saleMap = getSales($year-1,$arId);
+			$extraBagsMap = getExtraBags($year-1,$arId);;
 			
 			foreach($saleMap as $month => $total)
 			{
@@ -138,7 +139,7 @@ function getOpeningPoints($year,$arId,$isActive)
 				{
 					$points = round($total * $targetMap[$month]['rate'],0);
 					$actual_perc = round($total * 100 / $targetMap[$month]['target'],0);
-					$point_perc = getPointPercentage($actual_perc,$year,$month);			 
+					$point_perc = getPointPercentage($actual_perc,$year-1,$month);			 
 					$achieved_points = round($points * $point_perc/100,0);
 					
 					if($total > 0)		
@@ -161,7 +162,6 @@ function getOpeningPoints($year,$arId,$isActive)
 					$opening = $opening - $redemption['points'];
 				}	
 			}	
-
 			$year--;
 		}
 	}
