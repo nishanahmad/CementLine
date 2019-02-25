@@ -14,18 +14,35 @@ if(isset($_SESSION["user_name"]))
 		$type = $_POST['type'];
 		$amount = (int)$_POST['amount'];
 		$client = $_POST['client'];
+		$remarks = $_POST['remarks'];
 
 		if(empty($client))
 			$client = 'null';
 		else
 			$client = (int)$client;
 		
-		$insertQuery="INSERT INTO discounts (date, product, type, client, amount)
-			 VALUES
-			 ('$date', $product, '$type', $client, $amount)";
+		if($amount == 0)
+		{
+			$insertQuery="INSERT INTO discounts (date, product, type, client, amount, status, remarks)
+				 VALUES
+				 ('$date', $product, '$type', $client, $amount, 0, '$remarks')";			
+		}
+		else
+		{
+			$insertQuery="INSERT INTO discounts (date, product, type, client, amount, status, remarks)
+				 VALUES
+				 ('$date', $product, '$type', $client, $amount, 1, '$remarks')";						
+		}			
+
 		$insert = mysqli_query($con, $insertQuery) or die(mysqli_error($con));				
 
-		header( "Location: list.php");
+		if($type != 'wd')
+		{
+			$updateQuery = "UPDATE discounts SET status = 0 WHERE client = '$client' AND product = '$product' AND date < '$date' AND type = '$type' AND status = 1";
+			$update = mysqli_query($con, $updateQuery) or die(mysqli_error($con));							
+		}
+		
+		//header( "Location: list.php");
 	}	
 ?>
 <html>
@@ -113,6 +130,12 @@ if(isset($_SESSION["user_name"]))
 								<input type="text" required name="amount" pattern="[0-9]+" title="Input a valid number" class="form-control">
 							</div>
 						</div>					
+						<div class="form-group">
+							<label class="col-sm-2 col-sm-2 control-label">Remarks</label>
+							<div class="col-sm-6">
+								<input type="text" name="remarks" id="remarks" class="form-control">
+							</div>
+						</div>											
 						<button type="submit" class="btn btn-primary" style="margin-left:200px;" tabindex="4">Update</button> 
 						<a href="list.php" class="btn btn-default" style="margin-left:10px;">Cancel</a>
 						<br/><br/>

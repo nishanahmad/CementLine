@@ -4,7 +4,7 @@ if(isset($_SESSION['user_name']))
 {
 	require '../connect.php';
     
-	$discounts = mysqli_query($con,"SELECT * FROM discounts ORDER BY date DESC") or die(mysqli_error($con));
+	$discounts = mysqli_query($con,"SELECT * FROM discounts WHERE status = 1 ORDER BY date DESC") or die(mysqli_error($con));
 	
 	$clients = mysqli_query($con,"SELECT * FROM clients") or die(mysqli_error($con));
 	foreach($clients as $client)
@@ -51,24 +51,26 @@ if(isset($_SESSION['user_name']))
 					<a href="edit.php" style="margin-left:45%;" class="btn btn-theme" >New Discount</a>	
 					<section style="margin-top:40px;">
 						<form id="searchbox">
-							<table class="col-md-offset-2" style="width:55%">
+							<table class="col-md-offset-2" style="width:70%">
 								<tr>
-									<td style="width:15%;padding:2px;"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
-									<td style="width:25%;padding:2px;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
-									<td style="width:30%;padding:2px;"><input type="text" data-column="2"  class="form-control" placeholder="Client"></td>				
-									<td style="width:20%;padding:2px;"><input type="text" data-column="3"  class="form-control" placeholder="Type"></td>				
+									<td style="width:12%;padding:2px;"><input type="text" data-column="0"  class="form-control" placeholder="Date"></td>
+									<td style="width:18%;padding:2px;"><input type="text" data-column="1"  class="form-control" placeholder="Product"></td>	
+									<td style="width:20%;padding:2px;"><input type="text" data-column="2"  class="form-control" placeholder="Client"></td>				
+									<td style="width:10%;padding:2px;"><input type="text" data-column="3"  class="form-control" placeholder="Type"></td>				
 									<td style="width:10%;padding:2px;"><input type="text" data-column="4"  class="form-control" placeholder="Amount"></td>				
+									<td style="width:30%;padding:2px;"></td>				
 								</tr>	
 							</table>	
 						</form>																					
-						<table class="table table-bordered table-striped col-md-offset-2" style="width:55%" id="discounts">
+						<table class="table table-bordered table-striped col-md-offset-2" style="width:70%" id="discounts">
 							<thead class="cf">
 								<tr>
-									<th style="width:15%;">Date</th>
-									<th style="width:25%;">Product</th>
-									<th style="width:30%;">Client</th>
-									<th style="width:20%;">Type</th>
+									<th style="width:12%;">Date</th>
+									<th style="width:18%;">Product</th>
+									<th style="width:20%;">Client</th>
+									<th style="width:10%;">Type</th>
 									<th style="width:10%;">Amount</th>
+									<th style="width:30%;">Remarks</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -83,7 +85,8 @@ if(isset($_SESSION['user_name']))
 									<td><?php if($discount['type'] == 'cd') echo 'Cash discount';
 											  else if($discount['type'] == 'sd') echo 'Special discount';
 											  else if($discount['type'] == 'wd') echo 'Wagon discount';?></td>
-									<td><?php echo $discount['amount'];?></td>																									
+									<td><?php echo $discount['amount'];?></td>
+									<td><?php echo $discount['remarks'];?></td>									
 								</tr>																								<?php
 							}																										?>
 							</tbody>
