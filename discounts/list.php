@@ -4,7 +4,12 @@ if(isset($_SESSION['user_name']))
 {
 	require '../connect.php';
     
-	$discounts = mysqli_query($con,"SELECT * FROM discounts WHERE status = 1 ORDER BY date DESC") or die(mysqli_error($con));
+	$status = $_GET['status'];
+	
+	if($status == 1)
+		$discounts = mysqli_query($con,"SELECT * FROM discounts WHERE status = 1 ORDER BY date DESC") or die(mysqli_error($con));
+	else
+		$discounts = mysqli_query($con,"SELECT * FROM discounts ORDER BY date DESC") or die(mysqli_error($con));
 	
 	$clients = mysqli_query($con,"SELECT * FROM clients") or die(mysqli_error($con));
 	foreach($clients as $client)
@@ -47,8 +52,9 @@ if(isset($_SESSION['user_name']))
 		<div class="row mt">
 			<div class="col-lg-12">
 				<div class="content-panel">
-					<h2 style="margin-left:45%;" ><i class="fa fa-gift"></i> Discounts</i></h2><br/>
-					<a href="edit.php" style="margin-left:45%;" class="btn btn-theme" >New Discount</a>	
+					<h2 style="margin-left:45%;" ><i class="fa fa-gift"></i> Discounts</i></h2>
+					<br/>
+					<a href="edit.php" style="margin-left:45%;" class="btn btn-theme" >New Discount</a>
 					<section style="margin-top:40px;">
 						<form id="searchbox">
 							<table class="col-md-offset-2" style="width:70%">

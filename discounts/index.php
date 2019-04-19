@@ -30,7 +30,7 @@ a{
   <br><br> 
    	<a href="../rate/list.php" class="btn lg ghost">Rate List</a>
     <br><br><br>	
-   	<a href="list.php" class="btn lg ghost">Discount List</a>
+   	<a href="list.php?status=1" class="btn lg ghost">Discount List</a>
     <br><br><br>		
 	
 	</div>

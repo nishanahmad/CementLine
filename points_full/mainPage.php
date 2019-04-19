@@ -43,7 +43,13 @@ if(isset($_SESSION["user_name"]))
 		$targetMap[$target['client']]['payment_perc'] = $target['payment_perc'];
 	}
 	
-	$sales = mysqli_query($con,"SELECT client,SUM(qty),YEAR(date),MONTH(date) FROM sales WHERE '$year' = YEAR(date) AND '$month' = MONTH(date) AND product = 63 AND client IN ('$arIds') GROUP BY client") or die(mysqli_error($con));	
+	$coromandelProducts =  mysqli_query($con,"SELECT * FROM products WHERE brand = (SELECT id FROM brands WHERE name = 'COROMANDEL')") or die(mysqli_error($con));		 
+	foreach($coromandelProducts as $coromandelProduct)
+		$coromandelMap[$coromandelProduct['id']] = null;
+	
+	$corIds = implode("','",array_keys($coromandelMap));	
+	
+	$sales = mysqli_query($con,"SELECT client,SUM(qty),YEAR(date),MONTH(date) FROM sales WHERE '$year' = YEAR(date) AND '$month' = MONTH(date) AND product IN('$corIds') AND client IN ('$arIds') GROUP BY client") or die(mysqli_error($con));	
 	foreach($sales as $sale)
 	{
 		$arId = $sale['client'];
@@ -52,6 +58,9 @@ if(isset($_SESSION["user_name"]))
 		$total = $sale['SUM(qty)'];
 		if(isset($extraBagsMap[$arId][$year][$month]))
 			$total = $total + $extraBagsMap[$arId][$year][$month];
+		
+		if($arId == 192)
+			var_dump($total);	
 		
 		if(isset($targetMap[$arId]))
 		{
