@@ -59,8 +59,6 @@ if(isset($_SESSION["user_name"]))
 		if(isset($extraBagsMap[$arId][$year][$month]))
 			$total = $total + $extraBagsMap[$arId][$year][$month];
 		
-		if($arId == 192)
-			var_dump($total);	
 		
 		if(isset($targetMap[$arId]))
 		{
