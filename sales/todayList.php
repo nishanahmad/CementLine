@@ -29,6 +29,16 @@ if(isset($_SESSION["user_name"]))
 			$rateMap[$rate['product']] = $rate['rate'];
 	}	
 	
+	$companyRates = mysqli_query($con,"SELECT * FROM company_rate INNER JOIN products ON company_rate.product = products.id ORDER BY date DESC,products.name ASC") or die(mysqli_error($con));
+	foreach($companyRates as $cRate)
+	{
+		if(!isset($companyRateMap[$cRate['product']]))
+		{
+			$companyRateMap[$cRate['product']]['rate'] = $cRate['rate'];
+			$companyRateMap[$cRate['product']]['recommended'] = $cRate['recommended'];
+		}
+	}		
+	
 	$discountMap = array();
 	$discounts = mysqli_query($con,"SELECT * FROM discounts WHERE type = 'wd' AND date = CURDATE()") or die(mysqli_error($con));
 	foreach($discounts as $discount)
@@ -76,7 +86,7 @@ if(isset($_SESSION["user_name"]))
 <html>
 	<style>
 		.rateTable{
-			width:30%;
+			width:50%;
 			border-collapse:collapse;
 		}
 		.rateTable th{
@@ -123,7 +133,9 @@ if(isset($_SESSION["user_name"]))
 					<th>Rate</th>
 					<th style="width:20%;">Discount</th>									
 					<th>Product</th>
-					<th>Qty</th>						
+					<th>Qty</th>
+					<th style="width:15%;">Company Rate</th>
+					<th style="width:15%;">Company Recommended</th>					
 				</tr>			
 			<?php				
 			foreach($rateMap as $product=>$rate)
@@ -133,6 +145,8 @@ if(isset($_SESSION["user_name"]))
 					<td><?php if(isset($discountMap[$product])) echo $discountMap[$product].'/-';?></td>										
 					<td><?php echo $productNameMap[$product];?></td>
 					<td><?php if(isset($productMap[$product])) echo $productMap[$product];?></td>						
+					<td><?php if(isset($companyRateMap[$product])) echo $companyRateMap[$product]['rate'];?></td>						
+					<td><?php if(isset($companyRateMap[$product])) echo $companyRateMap[$product]['recommended'];?></td>						
 				</tr>
 								<?php
 			}?> 
@@ -141,6 +155,8 @@ if(isset($_SESSION["user_name"]))
 					<th></th>										
 					<th>Total</th>
 					<th><?php echo $total;?></th>
+					<th></th>						
+					<th></th>										
 				</tr>
 			</table>
 			</div>				
