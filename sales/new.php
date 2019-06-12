@@ -205,7 +205,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 
 	<tr>
 		<td><label>Cash Discount</label></td>
-		<td><input type="text" name="cd" class="txtField" id="cd" onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="cd" class="txtField" id="cd" onchange="refreshRate();"></td>	
 
 		<td><label>Address Part 2</label></td>
 		<td><input type="text" name="address2" class="txtField"></td>	
@@ -213,7 +213,7 @@ echo "LOGGED USER : ".$_SESSION["user_name"] ;
 	
 	<tr>
 		<td><label>Special Discount</label></td>
-		<td><input type="text" name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
+		<td><input type="text" readonly name="sd" class="txtField" id="sd" onchange="refreshRate();"></td>	
 
 		<td><label>Remarks</label></td>
 		<td><input type="text" name="remarks" class="txtField"></td>
