@@ -42,7 +42,7 @@ if(isset($_SESSION["user_name"]))
 			$update = mysqli_query($con, $updateQuery) or die(mysqli_error($con));							
 		}
 		
-		header( "Location: list.php");
+		header( "Location: list.php?status=1");
 	}	
 ?>
 <html>
