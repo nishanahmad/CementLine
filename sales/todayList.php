@@ -134,6 +134,7 @@ if(isset($_SESSION["user_name"]))
 					<th style="width:20%;">Discount</th>									
 					<th>Product</th>
 					<th>Qty</th>
+					<th style="border-color:white black white black;width:7%;"></th>
 					<th style="width:15%;">Company Rate</th>
 					<th style="width:15%;">Company Recommended</th>					
 				</tr>			
@@ -145,8 +146,9 @@ if(isset($_SESSION["user_name"]))
 					<td><?php if(isset($discountMap[$product])) echo $discountMap[$product].'/-';?></td>										
 					<td><?php echo $productNameMap[$product];?></td>
 					<td><?php if(isset($productMap[$product])) echo $productMap[$product];?></td>						
-					<td><?php if(isset($companyRateMap[$product])) echo $companyRateMap[$product]['rate'];?></td>						
-					<td><?php if(isset($companyRateMap[$product])) echo $companyRateMap[$product]['recommended'];?></td>						
+					<td style="border-color:white black white black;"></td>
+					<td><?php if(isset($companyRateMap[$product])) echo $companyRateMap[$product]['rate'].'/-';?></td>						
+					<td><?php if(isset($companyRateMap[$product])) echo $companyRateMap[$product]['recommended'].'/-';?></td>						
 				</tr>
 								<?php
 			}?> 
@@ -155,6 +157,7 @@ if(isset($_SESSION["user_name"]))
 					<th></th>										
 					<th>Total</th>
 					<th><?php echo $total;?></th>
+					<th style="border-color:white black white black;"></th>
 					<th></th>						
 					<th></th>										
 				</tr>
