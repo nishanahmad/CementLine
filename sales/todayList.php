@@ -49,11 +49,14 @@ if(isset($_SESSION["user_name"]))
 	$i=0;
 	$productMap = array();
 	$mainMap = array();
-	$qty=0;
 	$total = 0;
 	while($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) 
-	{   
+	{ 
 		$productId = $row['product'];
+		if($productId == 2)
+		{
+			var_dump($row);
+		}
 		if (array_key_exists($productId,$productMap))
 		{   
 			$productMap[$productId] = $productMap[$productId] + $row["qty"];
@@ -72,9 +75,7 @@ if(isset($_SESSION["user_name"]))
 		$mainMap[$i]['truck'] = $row['truck_no'];
 		$mainMap[$i]['productId'] = $row['product'];
 		$mainMap[$i]['product'] = $productNameMap[$row['product']];
-		$mainMap[$i]['truck'] = $row['truck_no'];
 		$mainMap[$i]['qty'] = $row['qty'];
-		$mainMap[$i]['truck'] = $row['truck_no'];
 		$mainMap[$i]['bill'] = $row['bill_no'];
 		$mainMap[$i]['name'] = $row['customer_name'];
 		$mainMap[$i]['phone'] = $row['customer_phone'];
@@ -85,6 +86,11 @@ if(isset($_SESSION["user_name"]))
 		?>
 <html>
 	<style>
+		@media only screen and (max-width: 900px) {
+			.desktop{
+				display: none;
+			}	
+
 		.rateTable{
 			width:50%;
 			border-collapse:collapse;
@@ -96,7 +102,7 @@ if(isset($_SESSION["user_name"]))
 		.rateTable td{
 			padding: 5px;
 			color : #000000;
-		}			
+		}					
 	</style>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -203,7 +209,7 @@ if(isset($_SESSION["user_name"]))
 						<td class="desktop"><?php echo date('d-m-Y',strtotime($row['date'])); ?></td>
 						<td><?php echo $row['client']; ?></td>
 						<td class="desktop"><?php echo $row['truck']; ?></td>
-						<td><?php echo $finalRate;?></td>
+						<td><?php echo $finalRate.'/-';?></td>
 						<td><?php echo $row['product']; ?></td>
 						<td><?php echo $row['qty']; ?></td>
 						<td><?php echo $row['bill']; ?></td>
