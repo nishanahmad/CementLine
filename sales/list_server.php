@@ -208,7 +208,10 @@ if(isset($_SESSION["user_name"]))
 		$nestedData[] = date('d-m-Y',strtotime($row['date']));
 		$nestedData[] = $clientMap[$row['client']];
 		$nestedData[] = $row["truck_no"];
-		$nestedData[] = $rate - $WD - $CD - $SD;
+		
+		$rate = $rate - $WD - $CD - $SD;
+		$nestedData[] = $rate.'/-';
+		
 		$nestedData[] = $productMap[$row['product']];
 		$nestedData[] = $row["qty"];
 			$total = $total + $row["qty"];
