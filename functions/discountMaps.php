@@ -19,7 +19,7 @@ function getRateMap()
 			$current = date('Y-m-d', strtotime($date));
 			$today = date('Y-m-d');
 
-			while($current <= $today)
+			while($current < $today)
 			{
 				$next = date('Y-m-d', strtotime($current. ' + 1 days'));
 				if(!array_key_exists($next,$array))
@@ -68,7 +68,7 @@ function getSDMap()
 			$current = date('Y-m-d', strtotime(array_key_first($array2)));
 			$today = date('Y-m-d');
 
-			while($current <= $today)
+			while($current < $today)
 			{
 				$next = date('Y-m-d', strtotime($current. ' + 1 days'));
 				if(!array_key_exists($next,$array2))
@@ -102,7 +102,7 @@ function getCDMap()
 			$current = date('Y-m-d', strtotime(array_key_first($array2)));
 			$today = date('Y-m-d');
 
-			while($current <= $today)
+			while($current < $today)
 			{
 				$next = date('Y-m-d', strtotime($current. ' + 1 days'));
 				if(!array_key_exists($next,$array2))
