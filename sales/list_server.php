@@ -4,7 +4,13 @@ if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
 	require '../functions/rate.php';
-
+	require '../functions/discountMaps.php';
+	
+	$rateMap = getRateMap();
+	$sdMap = getSDMap();
+	$cdMap = getCDMap();
+	$wdMap = getWDMap();
+	
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
 	{
@@ -23,25 +29,26 @@ if(isset($_SESSION["user_name"]))
 		0 =>'id', 
 		1 =>'date', 
 		2 =>'client', 
-		3 => 'truck_no',
+		3 => 'rate',
 		4=> 'product',
 		5=> 'qty',
 		6=> 'bill_no',
 		7=> 'customer_name',
 		8=> 'customer_phone',
-		9=> 'remarks'
+		9=> 'truck_no',
+		10=> 'remarks'
 	);
 
 	// getting total number records without any search
 
-	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks";
+	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks,discount";
 	$sql.=" FROM sales";
 	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 27');	
 	$totalData = mysqli_num_rows($query);
 	$totalFiltered = $totalData;  // when there is no search parameter then total number rows = total number filtered rows.
 
 
-	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks";
+	$sql = "SELECT id,date,client,truck_no,product,qty,bill_no,customer_name,customer_phone,remarks,discount";
 	$sql.=" FROM sales where 1=1  ";
 
 	if( !empty($requestData['columns'][0]['search']['value']) )
@@ -127,13 +134,8 @@ if(isset($_SESSION["user_name"]))
 	}
 
 	if( !empty($requestData['columns'][3]['search']['value']) )
-	{ //truck
-		$sql.=" AND truck_no LIKE '%".$requestData['columns'][3]['search']['value']."%' ";
-	}
-
-	if( !empty($requestData['columns'][4]['search']['value']) )
 	{ 
-		$searchString = $requestData['columns'][4]['search']['value'];
+		$searchString = $requestData['columns'][3]['search']['value'];
 		$productList =  mysqli_query($con, "SELECT id FROM products WHERE name LIKE '%".$searchString."%' ") or die(mysqli_error($con).' LINE 114');	
 		$firstEntry  = true;
 		foreach($productList as $product)
@@ -148,31 +150,26 @@ if(isset($_SESSION["user_name"]))
 				$sql.=")";		
 	}
 
+	if( !empty($requestData['columns'][4]['search']['value']) )
+	{ 
+		$sql.=" AND qty LIKE '".$requestData['columns'][4]['search']['value']."%' ";
+	}
+
 	if( !empty($requestData['columns'][5]['search']['value']) )
 	{ 
-		$sql.=" AND qty LIKE '".$requestData['columns'][5]['search']['value']."%' ";
+		$sql.=" AND bill_no LIKE '".$requestData['columns'][5]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][6]['search']['value']) )
 	{ 
-		$sql.=" AND bill_no LIKE '".$requestData['columns'][6]['search']['value']."%' ";
+		$sql.=" AND customer_name LIKE '".$requestData['columns'][6]['search']['value']."%' ";
 	}
 
 	if( !empty($requestData['columns'][7]['search']['value']) )
-	{ 
-		$sql.=" AND customer_name LIKE '".$requestData['columns'][7]['search']['value']."%' ";
+	{ //truck
+		$sql.=" AND truck_no LIKE '%".$requestData['columns'][7]['search']['value']."%' ";
 	}
-
-	if( !empty($requestData['columns'][8]['search']['value']) )
-	{ 
-		$sql.=" AND customer_phone LIKE '".$requestData['columns'][8]['search']['value']."%' ";
-	}
-
-	if( !empty($requestData['columns'][9]['search']['value']) )
-	{ //cstl
-		$sql.=" AND remarks LIKE '".$requestData['columns'][9]['search']['value']."%' ";
-	}
-
+	
 	$query=mysqli_query($con, $sql) or die(mysqli_error($con).' LINE 148');	
 	$totalFiltered = mysqli_num_rows($query); // when there is a search parameter then we have to modify total number filtered rows as per search result.
 		
@@ -190,14 +187,36 @@ if(isset($_SESSION["user_name"]))
 		$nestedData[] = '<a href="edit.php?clicked_from=all_sales&id='.$row["id"].'">'.$row["id"].'</a>';
 		$nestedData[] = date('d-m-Y',strtotime($row['date']));
 		$nestedData[] = $clientMap[$row['client']];
-		$nestedData[] = $row["truck_no"];
 		
+		if(isset($rateMap[$row['product']][$row['date']]))
+			$rate = $rateMap[$row['product']][$row['date']];
+		else
+			$rate = 0;
+		if(isset($sdMap[$row['product']][$row['client']][$row['date']]))
+			$sd = $sdMap[$row['product']][$row['client']][$row['date']];
+		else
+			$sd = 0;
+		if(isset($cdMap[$row['product']][$row['client']][$row['date']]))
+			$cd = $cdMap[$row['product']][$row['client']][$row['date']];
+		else
+			$cd = 0;
+		if(isset($wdMap[$row['product']][$row['date']]))
+			$wd = $wdMap[$row['product']][$row['date']];
+		else
+			$wd = 0;
+		
+		$rate = $rate - $sd - $cd - $wd - $row['discount'];		
+		$nestedData[] = $rate.'/-';		
 		$nestedData[] = $productMap[$row['product']];
 		$nestedData[] = $row["qty"];
 			$total = $total + $row["qty"];
 		$nestedData[] = $row["bill_no"];
 		$nestedData[] = $row["customer_name"];
+		$nestedData[] = $row["truck_no"];
 		$nestedData[] = $row["remarks"];
+		
+
+		
 		$data[] = $nestedData;
 		
 		$product = $productMap[$row['product']];
@@ -219,8 +238,8 @@ if(isset($_SESSION["user_name"]))
 				"recordsTotal"    => intval( $totalData ),  // total number of records
 				"recordsFiltered" => intval( $totalFiltered ), // total number of records after searching, if there is no searching then totalFiltered = totalData
 				"data"            => $data,   // total data array
-				"itemarray1"		  => json_encode($itemarray1),				
-				"itemarray2"		  => json_encode($itemarray2),							
+				"itemarray1"	  => json_encode($itemarray1),				
+				"itemarray2"	  => json_encode($itemarray2),							
 				"total"           => $total 
 				);
 
