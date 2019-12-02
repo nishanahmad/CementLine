@@ -136,7 +136,7 @@ if(isset($_SESSION["user_name"]))
 		</div>
 <div align="center" class="gradient">
 <font size=5>
-<SQL:<span class='sql'></span><br><br>
+SQL:<span class='sql'></span><br><br>
 <br>
 <div class="container">
 <div class="floatLeft">
