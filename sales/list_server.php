@@ -213,7 +213,8 @@ if(isset($_SESSION["user_name"]))
 				"data"            => $data,   // total data array
 				"itemarray1"	  => json_encode($itemarray1),				
 				"itemarray2"	  => json_encode($itemarray2),							
-				"total"           => $total 
+				"total"           => $total,
+				"sql"			  => $sql				
 				);
 
 	echo json_encode($json_data);  // send data as json format
