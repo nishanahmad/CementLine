@@ -3,13 +3,6 @@ session_start();
 if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
-	require '../functions/rate.php';
-	require '../functions/discountMaps.php';
-	
-	$rateMap = getRateMap();
-	$sdMap = getSDMap();
-	$cdMap = getCDMap();
-	$wdMap = getWDMap();
 	
 	$clients = mysqli_query($con,"SELECT id,name FROM clients ORDER BY name ASC");	
 	foreach($clients as $client)
@@ -187,26 +180,6 @@ if(isset($_SESSION["user_name"]))
 		$nestedData[] = '<a href="edit.php?clicked_from=all_sales&id='.$row["id"].'">'.$row["id"].'</a>';
 		$nestedData[] = date('d-m-Y',strtotime($row['date']));
 		$nestedData[] = $clientMap[$row['client']];
-		
-		if(isset($rateMap[$row['product']][$row['date']]))
-			$rate = $rateMap[$row['product']][$row['date']];
-		else
-			$rate = 0;
-		if(isset($sdMap[$row['product']][$row['client']][$row['date']]))
-			$sd = $sdMap[$row['product']][$row['client']][$row['date']];
-		else
-			$sd = 0;
-		if(isset($cdMap[$row['product']][$row['client']][$row['date']]))
-			$cd = $cdMap[$row['product']][$row['client']][$row['date']];
-		else
-			$cd = 0;
-		if(isset($wdMap[$row['product']][$row['date']]))
-			$wd = $wdMap[$row['product']][$row['date']];
-		else
-			$wd = 0;
-		
-		$rate = $rate - $sd - $cd - $wd - $row['discount'];		
-		$nestedData[] = $rate.'/-';		
 		$nestedData[] = $productMap[$row['product']];
 		$nestedData[] = $row["qty"];
 			$total = $total + $row["qty"];

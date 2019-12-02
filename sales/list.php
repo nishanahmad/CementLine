@@ -164,7 +164,6 @@ if(isset($_SESSION["user_name"]))
 							<th>Id</th>
 							<th style="min-width:80px !important">Date</th>
 							<th>Client</th>
-							<th>Rate</th>							
 							<th>Product</th>
 							<th>Qty</th>
 							<th>Bill</th>							
