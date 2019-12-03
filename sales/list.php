@@ -108,7 +108,6 @@ if(isset($_SESSION["user_name"]))
 	$('.itemarray2').html(itemString2);
 	
 	$('.total').html(json.total);	
-	$('.sql').html(json.sql);
 	
 	} );				
 				
@@ -136,7 +135,6 @@ if(isset($_SESSION["user_name"]))
 		</div>
 <div align="center" class="gradient">
 <font size=5>
-SQL:<span class='sql'></span><br><br>
 <br>
 <div class="container">
 <div class="floatLeft">
@@ -166,6 +164,7 @@ SQL:<span class='sql'></span><br><br>
 							<th>Id</th>
 							<th style="min-width:80px !important">Date</th>
 							<th>Client</th>
+							<th>Rate</th>							
 							<th>Product</th>
 							<th>Qty</th>
 							<th>Bill</th>							
@@ -183,6 +182,4 @@ SQL:<span class='sql'></span><br><br>
 }
 else
 	header("Location:../index.php");
-
 ?>
-	
