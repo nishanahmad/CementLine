@@ -72,7 +72,7 @@ if(isset($_SESSION["user_name"]))
 					"serverSide": true,
 					"responsive": true,
 					"bJQueryUI":true,
-					"iDisplayLength": 1500,		
+					"iDisplayLength": 500,		
 					"aaSorting" : [[0, 'desc']],										
 					"ajax":{
 						url :"list_server.php", // json datasource
@@ -96,6 +96,7 @@ if(isset($_SESSION["user_name"]))
 	itemString1 = itemString1.replace(/}/g,'');	
 	//console.log(itemString1);
 	$('.itemarray1').html(itemString1);
+	$('.sql').html(json.sql);
 	
 	var itemString2 = '<table class="responstable"><tr><th>Cement</th><th>Quantity</th></tr><td>' + json.itemarray2;
 	itemString2 = itemString2.replace(/"/g,'');
@@ -134,7 +135,7 @@ if(isset($_SESSION["user_name"]))
 		
 		</div>
 <div align="center" class="gradient">
-<font size=5>
+<font size="5">
 <br>
 <div class="container">
 <div class="floatLeft">
@@ -146,7 +147,9 @@ if(isset($_SESSION["user_name"]))
 </div>
 <br>
 <b>TOTAL : <span class='total'></span>
-</b></font>
+</b>
+<!--SQL:<span class='sql'></span><br><br-->
+</font>
 		<br><br><br>
 			<input type="text" data-column="0"  style="width:50px" class="search-input-text textarea" placeholder="Id">&nbsp&nbsp
 			<input type="text" data-column="1"  style="width:120px" class="search-input-text textarea" placeholder="Date">&nbsp&nbsp

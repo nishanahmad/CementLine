@@ -20,7 +20,7 @@ function getSaleMap($arIds,$startYear,$endYear)
 									  sum(if(month(date) = 11, IFNULL(qty, 0), 0)) AS '11',
 									  sum(if(month(date) = 12, IFNULL(qty, 0), 0)) AS '12'
 										FROM sales WHERE YEAR(date) = '$year' 
-										AND client IN('$arIds') AND product = 63
+										AND client IN('$arIds') AND (product = 63 OR product = 76)
 										GROUP BY client")  or die(mysqli_error($con));		 
 		foreach($sales as $sale)
 		{
