@@ -39,7 +39,7 @@ function getSales($year,$arId)
 	require '../connect.php';
 	
 	$saleMap = array();	
-	$salesList = mysqli_query($con, "SELECT SUM(qty),MONTH(date) FROM sales WHERE YEAR(date) = '$year' AND client = '$arId' AND product = 63 GROUP BY MONTH(date) ORDER BY MONTH(date) ASC" ) or die(mysqli_error($con));
+	$salesList = mysqli_query($con, "SELECT SUM(qty),MONTH(date) FROM sales WHERE YEAR(date) = '$year' AND client = '$arId' AND (product = 63 OR product = 76) GROUP BY MONTH(date) ORDER BY MONTH(date) ASC" ) or die(mysqli_error($con));
 	foreach($salesList as $sale) 
 	{
 		$saleMap[$sale['MONTH(date)']] = $sale['SUM(qty)'];
