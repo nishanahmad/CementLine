@@ -242,7 +242,7 @@ if(isset($_SESSION["user_name"]))
 						</tr>
 						<tr>
 							<td><label>Bill Discount</label></td>
-							<td><input type="text" name="bd" id="bd" class="txtField" pattern="[0-9]+" title="Input a valid number" value="<?php echo $row['discount'];?>"></td>			
+							<td><input type="text" name="bd" id="bd" class="txtField" value="<?php echo $row['discount'];?>"></td>			
 							<td><label>Address Part 1</label></td>
 							<td><input type="text" name="address1" class="txtField" value="<?php echo $row['address1']; ?>"></td>
 						</tr>
