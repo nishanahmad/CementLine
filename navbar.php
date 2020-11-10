@@ -280,12 +280,6 @@ a {
 			Sales
 		</a>		
 	</div>
-	<div class="mobile-bottom-nav__item <?php if($flag == 'Sheet') echo 'glow-mobile';?>">		
-		<div class="mobile-bottom-nav__item-content" onclick="javascript:location.href='../Sheet/requests.php'">
-			<i class="fa fa-clone fa-lg" aria-hidden="true"></i>
-			Sheets
-		</div>
-	</div>
 	<div class="mobile-bottom-nav__item <?php if($flag == 'reports') echo 'glow-mobile';?>">
 		<div class="mobile-bottom-nav__item-content" onclick="javascript:location.href='../reports/salesSummary.php'">
 			<i class="fa fa-chart-area fa-lg" aria-hidden="true"></i>
