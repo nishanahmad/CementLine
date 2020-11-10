@@ -2,7 +2,7 @@ let rateMap = new Map();
 let discountMap = new Map();
 
 $(function(){
-	$('#ar,#engineer,#client-filter,#eng-filter').select2();
+	$('#client,#client-filter,#eng-filter').select2();
 	
 	var pickeropts = { dateFormat:"dd-mm-yy"}; 
 	$( ".datepicker" ).datepicker(pickeropts);	
@@ -118,7 +118,7 @@ $(function(){
 	//  SET FINAL RATE ON PAGE LOAD
 	var date = $("#date").val();
 	var product = $("#product").val();
-	var client = $("#ar").val();
+	var client = $("#client").val();
 
 	$.ajax({
 		type: "POST",
@@ -146,7 +146,7 @@ $(function(){
 	{
 		date = $(this).val();
 		product = $("#product").val();
-		client = $("#ar").val();
+		client = $("#client").val();
 		
 		$.ajax({
 			type: "POST",
@@ -160,28 +160,13 @@ $(function(){
 		});
 		$.ajax({
 			type: "POST",
-			url: "ajax/checkEngineer.php",
-			data:'client='+client,
+			url: "ajax/getWD.php",
+			data:'product='+product+'&date='+date,
 			success: function(data){
-				if(data.includes("Engineer"))
-				{
-					$("#wd").val(0);
-					refreshRate();
-				}
-				else
-				{
-					$.ajax({
-						type: "POST",
-						url: "ajax/getWD.php",
-						data:'product='+product+'&date='+date,
-						success: function(data){
-							$("#wd").val(data);
-							refreshRate();
-						}
-					});										
-				}
+				$("#wd").val(data);
+				refreshRate();
 			}
-		});															
+		});												
 		$.ajax({
 			type: "POST",
 			url: "ajax/getCD.php",
@@ -191,6 +176,15 @@ $(function(){
 				refreshRate();
 			}
 		});		
+		$.ajax({
+			type: "POST",
+			url: "ajax/getSD.php",
+			data:'date='+date+'&product='+product+'&client='+client,
+			success: function(data){
+				$("#sd").val(data);
+				refreshRate();
+			}
+		});				
 	});
 
 
@@ -198,7 +192,7 @@ $(function(){
 	{
 		date = $("#date").val();
 		product = $(this).val();
-		client = $("#ar").val();
+		client = $("#client").val();
 		
 		$.ajax({
 			type: "POST",
@@ -230,32 +224,17 @@ $(function(){
 		});				
 		$.ajax({
 			type: "POST",
-			url: "ajax/checkEngineer.php",
-			data:'client='+client,
+			url: "ajax/getSD.php",
+			data:'product='+product+'&date='+date+'&client='+client,
 			success: function(data){
-				if(data.includes("Engineer"))
-				{
-					$("#wd").val(0);
-					refreshRate();
-				}
-				else
-				{
-					$.ajax({
-						type: "POST",
-						url: "ajax/getWD.php",
-						data:'product='+product+'&date='+date,
-						success: function(data){
-							$("#wd").val(data);
-							refreshRate();
-						}
-					});										
-				}
+				$("#sd").val(data);
+				refreshRate();
 			}
-		});															
+		});						
 	});
 
 
-	$("#ar").change(function()
+	$("#client").change(function()
 	{
 		var date = $("#date").val();
 		var product = $("#product").val();
@@ -268,33 +247,28 @@ $(function(){
 				$("#cd").val(data);
 				refreshRate();
 			}
-		});			
+		});		
 		$.ajax({
 			type: "POST",
-			url: "ajax/checkEngineer.php",
-			data:'client='+client,
+			url: "ajax/getWD.php",
+			data:'product='+product+'&date='+date,
 			success: function(data){
-				if(data.includes("Engineer"))
-				{
-					$("#wd").val(0);
-					refreshRate();
-				}
-				else
-				{
-					$.ajax({
-						type: "POST",
-						url: "ajax/getWD.php",
-						data:'product='+product+'&date='+date,
-						success: function(data){
-							$("#wd").val(data);
-							refreshRate();
-						}
-					});										
-				}
+				$("#wd").val(data);
+				refreshRate();
 			}
-		});
+		});												
+		$.ajax({
+			type: "POST",
+			url: "ajax/getSD.php",
+			data:'product='+product+'&date='+date,
+			success: function(data){
+				$("#sd").val(data);
+				refreshRate();
+			}
+		});														
 
-		var arId = $('#ar').val();
+
+		var arId = $('#client').val();
 		var shopName = shopNameArray[arId];
 		$('#shopName').val(shopName);		
 	});	
@@ -312,8 +286,9 @@ function refreshRate()
 	var cd=document.getElementById("cd").value;
 	var wd=document.getElementById("wd").value;
 	var bd=document.getElementById("bd").value;
-	
-	$('#final').val(rate-cd-wd-bd);
+	var bd=document.getElementById("sd").value;
+	console.log(rate);
+	$('#final').val(rate-cd-wd-bd-sd);
 }			
 
 	
