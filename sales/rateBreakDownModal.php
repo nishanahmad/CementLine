@@ -27,6 +27,10 @@ if(isset($_SESSION["user_name"]))
 					<td><input readonly id="wd"/></td>
 				</tr>			
 				<tr>
+					<td><label>Special Discount</label></td>
+					<td><input readonly id="sd"/></td>
+				</tr>	
+				<tr>
 					<td><label>Cash Discount</label></td>
 					<td><input readonly id="cd"/></td>
 				</tr>	

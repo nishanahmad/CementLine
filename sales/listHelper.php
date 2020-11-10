@@ -203,6 +203,40 @@ function getCDMap()
 	return $cdMap;	
 }
 
+function getSDMap()
+{
+	require '../connect.php';	
+	
+	$sdMap = array();
+
+	$discounts = mysqli_query($con, "SELECT * FROM discounts WHERE type = 'Special Discount' ORDER BY date") or die(mysqli_error($con));				 	 
+	foreach($discounts as $discount)
+	{
+		$sdMap[$discount['product']][$discount['client']][$discount['date']] = $discount['discount'];
+	}
+
+	foreach($sdMap as $product => $array1)
+	{
+		foreach($array1 as $client => $array2)
+		{
+			$current = date('Y-m-d', strtotime(get_array_key_first($array2)));
+			$today = date('Y-m-d');
+
+			while($current < $today)
+			{
+				$next = date('Y-m-d', strtotime($current. ' + 1 days'));
+				if(!array_key_exists($next,$array2))
+				{
+					$sdMap[$product][$client][$next] = $sdMap[$product][$client][$current];
+				}
+				$current = date('Y-m-d', strtotime($current. ' + 1 days'));
+			}
+		}
+	}
+	
+	return $sdMap;	
+}
+
 function get_array_key_first(array $arr) 
 {
 	foreach($arr as $key => $unused) 

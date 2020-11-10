@@ -10,26 +10,38 @@ if(isset($_SESSION["user_name"]))
 		$fromDate = date("Y-m-d", strtotime($_GET['from']));		
 	else
 		$fromDate = date("Y-m-d");		
+	
+	if(isset($_GET['brand']))
+		$urlBrand = date("Y-m-d", strtotime($_GET['from']));		
+	else
+		$fromDate = date("Y-m-d");			
 
 	if(isset($_GET['to']))		
 		$toDate = date("Y-m-d", strtotime($_GET['to']));		
 	else
 		$toDate = date("Y-m-d");		
 	
-	if(isset($_GET['product']))		
-		$product = (float)$_GET['product'];
+	if(isset($_GET['brand']))
+	{
+		$brand = (float)$_GET['brand'];
+		if($brand != 'all')
+		{
+			$productIdsMap = null;
+			$brandProducts = mysqli_query($con,"SELECT id FROM products WHERE brand = $brand") or die(mysqli_error($con));		 
+			foreach($brandProducts as $bp)
+				$productIdsMap[$bp['id']] = null;
+			
+			$productIds = implode("','",array_keys($productIdsMap));							
+		}
+	}
 	else
-		$product = 'all';
+		$brand = 'all';
 	
-	if(isset($_GET['type']))		
-		$type = $_GET['type'];
-	else
-		$type = 'all';	
 	
-	if($product == 'all')
-		$salesList = mysqli_query($con, "SELECT client,SUM(qty) FROM sales WHERE date >= '$fromDate' AND date <= '$toDate' GROUP BY client" ) or die(mysqli_error($con));
+	if($brand == 'all')
+		$salesList = mysqli_query($con, "SELECT client,product,SUM(qty) FROM sales WHERE date >= '$fromDate' AND date <= '$toDate' GROUP BY client,product" ) or die(mysqli_error($con));
 	else
-		$salesList = mysqli_query($con, "SELECT client,product,SUM(qty) FROM sales WHERE date >= '$fromDate' AND date <= '$toDate' AND product = $product GROUP BY client,product" ) or die(mysqli_error($con));
+		$salesList = mysqli_query($con, "SELECT client,product,SUM(qty) FROM sales WHERE date >= '$fromDate' AND date <= '$toDate' AND product IN ('$productIds') GROUP BY client,product" ) or die(mysqli_error($con));
 		
 
 	$products = mysqli_query($con, "SELECT * FROM products" ) or die(mysqli_error($con));	
@@ -37,6 +49,11 @@ if(isset($_SESSION["user_name"]))
 	{
 		$productMap[$pro['id']] = $pro['name'];
 	}
+	
+	$brandsQuery = mysqli_query($con, "SELECT * FROM brands ORDER BY name" ) or die(mysqli_error($con));	
+	foreach($brandsQuery as $brnd)
+		$brands[$brnd['id']] = $brnd['name'];
+	
 	
 	$arObjects = mysqli_query($con, "SELECT * FROM clients order by name ASC" ) or die(mysqli_error($con));	
 	foreach($arObjects as $ar)
@@ -47,7 +64,7 @@ if(isset($_SESSION["user_name"]))
 	}
 	
 	$tallyFlag = false;
-	if($fromDate == $toDate && $product == 'All')
+	if($fromDate == $toDate && $brand == 'All')
 	{
 		$tallyFlag = true;
 		$tallyObjects = mysqli_query($con, "SELECT * FROM tally_day_check WHERE date = '$toDate'" ) or die(mysqli_error($con));
@@ -61,7 +78,7 @@ if(isset($_SESSION["user_name"]))
 		
 	if($_POST)
 	{
-		$URL='salesSummary.php?from='.$_POST['fromDate'].'&to='.$_POST['toDate'].'&product='.$_POST['product'].'&type='.$_POST['type'];
+		$URL='salesSummary.php?from='.$_POST['fromDate'].'&to='.$_POST['toDate'].'&brand='.$_POST['brand'];
 		echo "<script type='text/javascript'>document.location.href='{$URL}';</script>";
 		echo '<META HTTP-EQUIV="refresh" content="0;URL=' . $URL . '">';				
 	}	
@@ -107,7 +124,7 @@ if(isset($_SESSION["user_name"]))
 				<br/><br/>
 				<div align="center">
 					<form method="post" action="" autocomplete="off">
-						<div class="row" style="margin-left:20%">
+						<div class="row" style="margin-left:30%">
 							<div style="width:220px;">
 								<div class="input-group">
 									<span class="input-group-text col-md-5"><i class="far fa-calendar-alt"></i>&nbsp;From</span>
@@ -120,28 +137,18 @@ if(isset($_SESSION["user_name"]))
 									<input type="text" required name="toDate" id="toDate" class="form-control" value="<?php echo date('d-m-Y',strtotime($toDate)); ?>">
 								</div>
 							</div>
-							<div style="width:220px;">
+							<div style="width:300px;">
 								<div class="input-group">
-									<span class="input-group-text col-md-6"><i class="fa fa-shield"></i>&nbsp;Product</span>
-										<select name="product" id="product" required class="form-control">
-											<option value="all">ALL</option>																<?php
-											foreach($products as $pro) 
-											{																								?>
-												<option <?php if($product == $pro['id']) echo 'selected';?> value="<?php echo $pro['id'];?>"><?php echo $pro['name'];?></option>		<?php	
-											}																								?>
-										</select>					
+									<span class="input-group-text col-md-5"><i class="fa fa-shield"></i>&nbsp;Brand</span>
+									<select name="brand" id="brand" required class="form-control">
+										<option value="all">ALL</option>																															<?php
+										foreach($brands as $id => $name) 
+										{																																			?>
+											<option <?php if($brand == $id) echo 'selected';?> value="<?php echo $id;?>"><?php echo $name;?></option>							<?php
+										}																																							?>
+									</select>					
 								</div>
 							</div>
-							<div style="width:220px;">
-								<div class="input-group">
-									<span class="input-group-text col-md-5"><i class="fa fa-address-card-o"></i>&nbsp;Type</span>
-										<select name="type" id="type" required class="form-control">
-											<option <?php if($type == 'all') echo 'selected';?> value="all">ALL</option>
-											<option <?php if($type == 'AR/SR') echo 'selected';?> value="AR/SR">AR</option>
-											<option <?php if($type == 'Engineer') echo 'selected';?> value="Engineer">Engineers</option>
-										</select>					
-								</div>
-							</div>		
 						</div>
 						<br/>
 						<div class="justify-content-center">
@@ -149,18 +156,19 @@ if(isset($_SESSION["user_name"]))
 						</div>			
 					</form>																													
 					<br/>
-					<div id="content-desktop">																									<?php 
+					<div id="content-desktop">																																						<?php 
 						if($tallyFlag)
-						{																															?>
+						{																																											?>
 							<a href="tallyVerification.php?date=<?php echo $toDate;?>" class="btn" style="background-color:#E6717C;color:white;float:right;margin-right:30px;">Verify Individual Sale</a><?php
 						}																																												  ?>
 					</div>
 					<br/>
-					<div class="col-md-6 table-responsive-sm">
+					<div class="col-md-8 table-responsive-sm">
 					<table class="maintable table table-hover table-bordered table-responsive">
 						<thead>
 							<tr class="table-success">
-								<th style="text-align:left;" class="header" scope="col"><i class="fa fa-map-o"></i> AR</th>
+								<th style="text-align:left;" class="header" scope="col"><i class="fa fa-map-o"></i> Client</th>
+								<th style="width:20%;" class="header" scope="col"><i class="fa fa-shield"></i> Product</th>
 								<th style="width:12%;text-align:center" class="header" scope="col"><i class="fab fa-buffer"></i> Qty</th>
 								<th style="text-align:left;" class="header" scope="col"><i class="fas fa-store"></i> Shop Name</th>	
 								<th style="width:15%;" class="header" scope="col"><i class="fa fa-mobile"></i> Phone</th>	<?php
@@ -176,6 +184,7 @@ if(isset($_SESSION["user_name"]))
 						{																										?>
 							<tr id="<?php echo $arNameMap[$arSale['client']];?>">
 								<td style="text-align:left;"><?php echo $arNameMap[$arSale['client']];?></td>
+								<td style="text-align:left;"><?php echo $productMap[$arSale['product']];?></td>
 								<td style="text-align:center"><b><?php echo $arSale['SUM(qty)'];?></b></td>
 								<td style="text-align:left;"><?php echo $arShopMap[$arSale['client']];?></td>			
 								<td><?php echo $arPhoneMap[$arSale['client']];?></td>										<?php
@@ -192,10 +201,10 @@ if(isset($_SESSION["user_name"]))
 									}
 								}																																				?>																																
 							</tr>																																				<?php	
-							$total = $total + $arSale['SUM(qty)'] - $arSale['SUM(return_bag)'];
+							$total = $total + $arSale['SUM(qty)'];
 						}																																						?>	
 							<tr style="line-height:50px;background-color:#BEBEBE !important;font-family: Arial Black;">
-								<td colspan="1" style="text-align:right" >TOTAL</td>
+								<td colspan="2" style="text-align:right" >TOTAL</td>
 								<td colspan="2"><?php echo $total;?></td>
 								<td></td>
 							</tr>

@@ -35,6 +35,7 @@ if(isset($_SESSION["user_name"]))
 	$rateMap = getRateMap();
 	$cdMap = getCDMap();
 	$wdMap = getWDMap();
+	$sdMap = getSDMap();
 	
 	$productDates = mysqli_query($con, "SELECT * FROM rate ORDER BY date") or die(mysqli_error($con));				 	 
 	foreach($productDates as $rate)
@@ -179,12 +180,17 @@ if(isset($_SESSION["user_name"]))
 							else
 								$cd = 0;
 							
+							if(isset($sdMap[$sale['product']][$sale['client']][$sale['date']]))
+								$sd = $sdMap[$sale['product']][$sale['client']][$sale['date']];
+							else
+								$sd = 0;							
+							
 							if(isset($wdMap[$sale['product']][$sale['date']]))
 								$wd = $wdMap[$sale['product']][$sale['date']];
 							else
 								$wd = 0;
 							
-							$finalRate = $rate - $cd - $wd - $sale['discount'];																					?>	
+							$finalRate = $rate - $cd - $sd - $wd - $sale['discount'];																					?>	
 							
 							<tr data-id="<?php echo $sale['id'];?>" data-params="<?php echo explode('?',$_SERVER['REQUEST_URI'])[1];?>" class="saleId" style="cursor:pointer;">
 								<td><?php echo date('d-m-Y',strtotime($sale['date'])); ?></td>

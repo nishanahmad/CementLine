@@ -1,6 +1,6 @@
 function arRefresh(shopNameArray)
 {
-	var arId = $('#ar').val();
+	var arId = $('#client').val();
 	var shopName = shopNameArray[arId];
 	$('#shopName').val(shopName);
 }								
@@ -13,20 +13,20 @@ $(document).ready(function()
 		setTimeout(function(){ x.className = x.className.replace("show", ""); }, 2000);					
 	}
 	
-	$("#ar,#engineer,#truck").select2();
+	$("#client,#truck").select2();
 	
 	var pickerOpts = { dateFormat:"dd-mm-yy"}; 
 	$( "#date" ).datepicker(pickerOpts);	
 	$( "#sheetDate" ).datepicker(pickerOpts);	
 	
-	var arId = $('#ar').val();
+	var arId = $('#client').val();
 	var shopName = shopNameArray[arId];
 	$('#shopName').val(shopName);	
 		
 
 	var date = $("#date").val();
 	var product = $("#product").val();
-	var client = $("#ar").val();
+	var client = $("#client").val();
 	
 	$.ajax({
 		type: "POST",
@@ -38,30 +38,17 @@ $(document).ready(function()
 			refreshRate();
 		}
 	});
+
 	$.ajax({
 		type: "POST",
-		url: "ajax/checkEngineer.php",
-		data:'client='+client,
+		url: "ajax/getWD.php",
+		data:'product='+product+'&date='+date,
 		success: function(data){
-			if(data.includes("Engineer"))
-			{
-				$("#wd").val(0);
-				refreshRate();
-			}
-			else
-			{
-				$.ajax({
-					type: "POST",
-					url: "ajax/getWD.php",
-					data:'product='+product+'&date='+date,
-					success: function(data){
-						$("#wd").val(data);
-						refreshRate();
-					}
-				});										
-			}
+			$("#wd").val(data);
+			refreshRate();
 		}
-	});
+	});											
+
 	$.ajax({
 		type: "POST",
 		url: "ajax/getCD.php",
@@ -72,12 +59,21 @@ $(document).ready(function()
 		}
 	});		
 
+	$.ajax({
+		type: "POST",
+		url: "ajax/getSD.php",
+		data:'date='+date+'&product='+product+'&client='+client,
+		success: function(data){
+			$("#sd").val(data);
+			refreshRate();
+		}
+	});		
 
 	$("#date").change(function()
 	{
 		var date = $(this).val();
 		var product = $("#product").val();
-		var client = $("#ar").val();
+		var client = $("#client").val();
 		
 		$.ajax({
 			type: "POST",
@@ -91,26 +87,11 @@ $(document).ready(function()
 		});
 		$.ajax({
 			type: "POST",
-			url: "ajax/checkEngineer.php",
-			data:'client='+client,
+			url: "ajax/getWD.php",
+			data:'product='+product+'&date='+date,
 			success: function(data){
-				if(data.includes("Engineer"))
-				{
-					$("#wd").val(0);
-					refreshRate();
-				}
-				else
-				{
-					$.ajax({
-						type: "POST",
-						url: "ajax/getWD.php",
-						data:'product='+product+'&date='+date,
-						success: function(data){
-							$("#wd").val(data);
-							refreshRate();
-						}
-					});										
-				}
+				$("#wd").val(data);
+				refreshRate();
 			}
 		});												
 		$.ajax({
@@ -122,6 +103,15 @@ $(document).ready(function()
 				refreshRate();
 			}
 		});		
+		$.ajax({
+			type: "POST",
+			url: "ajax/getSD.php",
+			data:'date='+date+'&product='+product+'&client='+client,
+			success: function(data){
+				$("#sd").val(data);
+				refreshRate();
+			}
+		});				
 	});
 	
 	
@@ -130,7 +120,7 @@ $(document).ready(function()
 	{
 		date = $("#date").val();
 		product = $(this).val();
-		client = $("#ar").val();
+		client = $("#client").val();
 		
 		$.ajax({
 			type: "POST",
@@ -162,31 +152,16 @@ $(document).ready(function()
 		});				
 		$.ajax({
 			type: "POST",
-			url: "ajax/checkEngineer.php",
-			data:'client='+client,
+			url: "ajax/getSD.php",
+			data:'product='+product+'&date='+date+'&client='+client,
 			success: function(data){
-				if(data.includes("Engineer"))
-				{
-					$("#wd").val(0);
-					refreshRate();
-				}
-				else
-				{
-					$.ajax({
-						type: "POST",
-						url: "ajax/getWD.php",
-						data:'product='+product+'&date='+date,
-						success: function(data){
-							$("#wd").val(data);
-							refreshRate();
-						}
-					});										
-				}
+				$("#sd").val(data);
+				refreshRate();
 			}
-		});															
+		});
 	});
 	
-	$("#ar").change(function()
+	$("#client").change(function()
 	{
 		var date = $("#date").val();
 		var product = $("#product").val();
@@ -202,28 +177,22 @@ $(document).ready(function()
 		});			
 		$.ajax({
 			type: "POST",
-			url: "ajax/checkEngineer.php",
-			data:'client='+client,
+			url: "ajax/getSD.php",
+			data:'client='+client+'&date='+date+'&product='+product,
 			success: function(data){
-				if(data.includes("Engineer"))
-				{
-					$("#wd").val(0);
-					refreshRate();
-				}
-				else
-				{
-					$.ajax({
-						type: "POST",
-						url: "ajax/getWD.php",
-						data:'product='+product+'&date='+date,
-						success: function(data){
-							$("#wd").val(data);
-							refreshRate();
-						}
-					});										
-				}
+				$("#sd").val(data);
+				refreshRate();
 			}
-		});			
+		});
+		$.ajax({
+			type: "POST",
+			url: "ajax/getWD.php",
+			data:'product='+product+'&date='+date,
+			success: function(data){
+				$("#wd").val(data);
+				refreshRate();
+			}
+		});		
 	});	
 	$("#bd").change(function(){
 		refreshRate();
@@ -356,8 +325,9 @@ function refreshRate()
 {
 	var rate=document.getElementById("rate").value;
 	var cd=document.getElementById("cd").value;
+	var sd=document.getElementById("sd").value;
 	var wd=document.getElementById("wd").value;
 	var bd=document.getElementById("bd").value;
 	
-	$('#final').val(rate-cd-wd-bd);
+	$('#final').val(rate-cd-sd-wd-bd);
 }

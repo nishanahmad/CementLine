@@ -181,6 +181,12 @@ if(isset($_SESSION["user_name"]))
 				</div>								
 				<div class="col col-md-4 offset-1" id="content-desktop">
 					<div class="input-group">
+						<span class="input-group-text col-md-6">Special Disc</span>
+						<input readonly id="sd" class="form-control">
+					</div>
+				</div>																
+				<div class="col col-md-4 offset-1" id="content-desktop">
+					<div class="input-group">
 						<span class="input-group-text col-md-6">Cash Disc</span>
 						<input readonly id="cd" class="form-control">
 					</div>
