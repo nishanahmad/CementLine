@@ -10,6 +10,7 @@ if(isset($_SESSION["user_name"]))
 	$sqlDate = date("Y-m-d", strtotime($date));
 	$client = $_POST['client'];
 	$truck = $_POST['truck'];
+	$order_no = $_POST['order_no'];
 	$product = $_POST['product'];
 	$qty = $_POST['qty'];
 	$discount = $_POST['bd'];	
@@ -18,24 +19,26 @@ if(isset($_SESSION["user_name"]))
 	$customerName = $_POST['customerName'];
 	$customerPhone = $_POST['customerPhone'];
 	$address1 = $_POST['address1'];
-	$address2 = $_POST['address2'];
 	$entered_by = $_SESSION["user_name"];
 	$entered_on = date('Y-m-d H:i:s');	
-			
+	
 	if(empty($discount))
 		$discount = null;	
+	if(empty($order_no))
+		$order_no = null;	
 	
-	$sql="INSERT INTO sales (date, client, truck_no, product, qty, discount, remarks, bill_no, customer_name, customer_phone, address1, address2,entered_by,entered_on)
+	$sql="INSERT INTO sales (date, client, truck_no, order_no, product, qty, discount, remarks, bill_no, customer_name, customer_phone, address1,entered_by,entered_on)
 		 VALUES
-		 ('$sqlDate', '$client', '$truck', '$product', '$qty', ".var_export($discount, true).", '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$address2', '$entered_by', '$entered_on')";
+		 ('$sqlDate', '$client','$truck',".var_export($order_no, true).",'$product', '$qty',".var_export($discount, true).", '$remarks', '$bill', '$customerName', '$customerPhone', '$address1', '$entered_by', '$entered_on')";
 
-	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 	 
-		 
-	header( "Location: new.php" );
+	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 
 	
-	mysqli_close($con);
+	$sql = $_POST['sql'];
+	$range = $_POST['range'];
+		
+	header('Location: list.php?success&sql='.$sql.'&range='.$range);
+
 }
 else
-	header( "Location: ../index.php" );
-
-?>
+	header( "Location: ../index/home.php" );
+?> 

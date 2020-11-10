@@ -1,112 +1,76 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <?php
 session_start();
-if(isset($_SESSION['user_name']))
+if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
-    
-	$clients = mysqli_query($con,"SELECT * FROM clients ORDER BY name") or die(mysqli_error($con));
-																														?>
-<html>
-	<head>
-		<title>Clients</title>
-		<meta charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-		<link href="../css/bootstrap.min.css" rel="stylesheet">
-		<link href="../css/dashio.css" rel="stylesheet">
-		<link href="../css/dashio-responsive.css" rel="stylesheet">	
-		<link href="../css/font-awesome.min.css" rel="stylesheet">		
-		<script type="text/javascript" language="javascript" src="../js/jquery.js"></script>
-		<script type="text/javascript" language="javascript" src="../js/jquery-ui.min.js"></script>
-		<script type="text/javascript" language="javascript" src="../js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
-		<style>
-		.dataTables_length{
-		  display:none;
-		}
-		.dataTables_paginate{
-		  display:none;
-		}
-		</style>
-	</head>
-	<body>
-		<div class="row content-panel">
-			<div class="col-md-12" align="center">
-				<a href="../index.php" class="link"><img alt='home' title='home' src='../images/home.png' width='50px' height='50px'/> </a>
-			</div>
-		</div>
-		<div class="row mt">
-			<div class="col-lg-12">
-				<div class="content-panel">
-					<h2 style="margin-left:45%;"><i class="fa fa-user"></i> Clients List</i></h2><br/>
-					<form id="searchbox" class="form-inline col-md-offset-3">
-						<input type="text" data-column="2"  style="margin-left:10px;" class="form-control" placeholder="Name">
-						<input type="text" data-column="3"  style="margin-left:10px;" class="form-control" placeholder="Phone">	
-						<input type="text" data-column="4"  style="margin-left:10px;" class="form-control" placeholder="Shop">					
-						<input type="text" data-column="5"  style="margin-left:10px;width:100px;" class="form-control" placeholder="Status">					
-					</form>	
-					<section style="margin:40px;margin-left:20%;">
-						<table class="table table-bordered table-striped" style="width:65%" id="clients">
-							<thead class="cf">
-								<tr>
-									<th style="width:7%;"/>
-									<th style="width:5%;">Id</th>
-									<th>Name</th>
-									<th style="min-width:120px;">Phone</th>
-									<th style="min-width:150px;">Shop</th>
-									<th>Status</th>
-								</tr>
-							</thead>
-							<tbody>
-							<?php
-							foreach($clients as $client)
-							{																												?>
-								<tr>
-								<td align="center"><a href="view.php?id=<?php echo $client['id'];?>" class="btn btn-theme" style="padding: 0px 15px;font-size: 13px;">View</a></td>
-								<td><?php echo $client['id'];?></td>
-								<td><?php echo $client['name'];?></td>
-								<td><?php echo $client['mobile'];?></td>
-								<td><?php echo $client['shop'];?></td>																<?php
-								if($client['isActive'])
-								{																									?>	
-									<td>Active</td>																					<?php									
-								}																									
-								else
-								{																									?>
-									<td>Suspended</td>																				<?php
-								}																									?>
-								</tr>																								<?php
-							}																										?>
-							</tbody>
-						</table>
-					</section>
-				</div>
-			</div>
-		</div>
-		<script>
-		$(document).ready(function() {
-			
-			var table = $('#clients').DataTable({
-				"iDisplayLength": 10000
-			});
-				
-			$("#clients_filter").css("display","none");  // hiding global search box
-			$('.form-control').on( 'keyup click', function () {   // for text boxes
-				var i =$(this).attr('data-column');  // getting column index
-				var v =$(this).val();  // getting search input value
-				table.columns(i).search(v).draw();
-			} );
-			$('.select').on( 'change', function () {   // for select box
-				var i =$(this).attr('data-column');  
-				var v =$(this).val();  
-				table.columns(i).search(v).draw();
-			} );	
+	require '../navbar.php';
+?>
 
-		} );
-		</script>
-	</body>
-</html>
-<?php
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../css/styles.css" rel="stylesheet" type="text/css">	
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.widgets.min.js"></script>
+<title>Clients</title>
+</head>
+<body>
+	<nav class="navbar navbar-light bg-light sticky-top bottom-nav justify-content-center" style="width:100%">
+		<span class="navbar-brand" style="font-size:25px;"><i class="fa fa-address-card-o"></i> Clients</span>
+	</nav>	
+	<div align="center">
+	<br/><br/>
+	<table class="maintable table table-hover table-bordered" style="width:50%;">
+	<?php
+		$sql = "SELECT * FROM clients ORDER BY name ASC";
+		$result = mysqli_query($con, $sql) or die(mysqli_error($con));																					?>
+		<thead>
+			<tr class="table-success">
+				<th style="width:20%">Name</th>
+				<th style="width:20%">Shop</th>
+				<th>Mobile</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>																																			<?php
+		while($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) 
+		{
+			$id = $row['id'];
+			$name = $row['name'];
+			$shop = $row['shop'];
+			$mobile = $row['mobile'];
+			$status = $row['isActive'];
+		?>	
+		<tr>
+			<td><?php echo $name; ?></td>	
+			<td><?php echo $shop; ?></td>	
+			<td style="text-align:center;width:10%"><?php echo $mobile;?></td>		
+			<td style="text-align:center;width:8%"><?php if($status == 1 ) echo 'Active'; else echo 'InActive';?></td>
+		</tr>																																			<?php
+		}																																																										?>
+		</tbody>	
+	</table>
+	</div>
+	<br/><br/>
+</body>
+<script>
+$(document).ready(function() {		
+	$("table").tablesorter({
+		dateFormat : "ddmmyyyy",
+		theme : 'bootstrap',
+		widgets: ['filter'],
+		filter_columnAnyMatch: true
+	}); 
+} );
+</script>
+</html>																														<?php
+
 }
 else
-	header("Location:../index.php");
-?>
+	header("Location:../index/home.php");

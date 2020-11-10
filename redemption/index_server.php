@@ -83,7 +83,7 @@ if(isset($_SESSION["user_name"]))
 if( !empty($requestData['columns'][2]['search']['value']) )
 {  //ar
 	$searchString = $requestData['columns'][2]['search']['value'];
-	$arList =  mysqli_query($con, "SELECT id FROM ar_details WHERE name LIKE '%".$searchString."%' ") or die(mysqli_error($con).' LINE 97');	
+	$arList =  mysqli_query($con, "SELECT id FROM clients WHERE name LIKE '%".$searchString."%' ") or die(mysqli_error($con).' LINE 97');	
 	$firstEntry  = true;
 	foreach($arList as $ar)
 	{

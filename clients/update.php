@@ -6,22 +6,25 @@ require '../connect.php';
 session_start();
 if(isset($_SESSION["user_name"]))
 {
-	$id = $_POST['id'];
+	$arId = $_POST['id'];
 	$name = $_POST['name'];
 	$mobile = $_POST['mobile'];
 	$shop = $_POST['shop'];
+	$sap = $_POST['sap'];
 	
 	if(empty($mobile))
 		$mobile = 'null';
+	if(empty($sap))
+		$sap = 'null';	
 	
 	if(empty($shop))
-		$sql = "UPDATE clients SET name='$name',mobile=$mobile,shop=NULL WHERE id=$id";
+		$sql = "UPDATE ar_details SET name='$name',mobile=$mobile,sap_code=$sap,shop_name=NULL WHERE id=$arId";
 	else
-		$sql = "UPDATE clients SET name='$name',mobile=$mobile,shop='$shop' WHERE id=$id";
+		$sql = "UPDATE ar_details SET name='$name',mobile=$mobile,sap_code=$sap,shop_name='$shop' WHERE id=$arId";
 	
 	$result = mysqli_query($con, $sql) or die(mysqli_error($con));				 
 
-	header( "Location: view.php?id=".$id );
+	header( "Location: view.php?id=".$arId );
 
 }
 else

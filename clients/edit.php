@@ -5,7 +5,7 @@ if(isset($_SESSION["user_name"]))
 	require '../connect.php';
     
 	$id = $_GET['id'];
-	$sql = mysqli_query($con,"SELECT * FROM clients WHERE id='$id'") or die(mysqli_error($con));
+	$sql = mysqli_query($con,"SELECT * FROM ar_details WHERE id='$id'") or die(mysqli_error($con));
 	$ar = mysqli_fetch_array($sql,MYSQLI_ASSOC);	
 ?>
 <html>
@@ -44,7 +44,13 @@ if(isset($_SESSION["user_name"]))
 						<div class="form-group">
 							<label class="col-sm-2 col-sm-2 control-label">Shop</label>
 							<div class="col-sm-6">
-								<input type="text" name="shop" value="<?php echo $ar['shop'];?>" class="form-control">
+								<input type="text" name="shop" value="<?php echo $ar['shop_name'];?>" class="form-control">
+							</div>
+						</div>																					
+						<div class="form-group">
+							<label class="col-sm-2 col-sm-2 control-label">SAP</label>
+							<div class="col-sm-6">
+								<input type="text" name="sap" value="<?php echo $ar['sap_code'];?>" class="form-control">
 							</div>
 						</div>																					
 						<button type="submit" class="btn btn-primary" style="margin-left:200px;" tabindex="4">Update</button> 

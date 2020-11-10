@@ -59,7 +59,7 @@ if(isset($_SESSION["user_name"]))
 	
 	$zeroTargetIds = implode("','",array_keys($zeroTargetMap));
 	
-	$arList = mysqli_query($con,"SELECT id, name, mobile, shop_name, user_id FROM ar_details WHERE isActive = 1 AND id NOT IN ('$zeroTargetIds') AND Type LIKE '%AR%' ") or die(mysqli_error($con));		 
+	$arList = mysqli_query($con,"SELECT id, name, mobile, shop_name, user_id FROM clients WHERE isActive = 1 AND id NOT IN ('$zeroTargetIds') AND Type LIKE '%AR%' ") or die(mysqli_error($con));		 
 	foreach($arList as $arObject)
 	{
 		$arNameMap[$arObject['id']] = $arObject['name'];
@@ -92,7 +92,7 @@ if(isset($_SESSION["user_name"]))
 		
 	if(isset($_GET['removeToday']) && $_GET['removeToday'] == 'true')
 	{
-		$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM nas_sale WHERE entry_date >= '$fromDate'
+		$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM sales WHERE entry_date >= '$fromDate'
 											AND entry_date <= '$toDate' AND entry_date < CURDATE() 
 											AND ar_id IN ('$arIds')
 											GROUP BY ar_id")
@@ -100,7 +100,7 @@ if(isset($_SESSION["user_name"]))
 	}
 	else
 	{
-		$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM nas_sale WHERE entry_date >= '$fromDate'
+		$sales = mysqli_query($con,"SELECT ar_id,SUM(srp),SUM(srh),SUM(f2r),SUM(return_bag) FROM sales WHERE entry_date >= '$fromDate'
 											AND entry_date <= '$toDate'
 											AND ar_id IN ('$arIds')
 											GROUP BY ar_id")
