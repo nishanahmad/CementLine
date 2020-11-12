@@ -35,12 +35,12 @@ if(isset($_SESSION["user_name"]))
 			foreach($unlockedList as $unlocked)
 			{
 				$id = $unlocked['sale'];
-				$query = mysqli_query($con, "SELECT * FROM sales WHERE sales_id = $id") or die(mysqli_error($con));
+				$query = mysqli_query($con, "SELECT * FROM sales WHERE id = $id") or die(mysqli_error($con));
 				$sale = mysqli_fetch_array($query, MYSQLI_ASSOC);																							?>
-				<a class="card" href="../reports/tallyverification.php?date=<?php echo $sale['entry_date'];?>">
+				<a class="card" href="../reports/tallyverification.php?date=<?php echo $sale['date'];?>">
 					<h3><?php echo $sale['bill_no'];?></h3>
 					<p class="small"><?php 
-						echo $clientNamesMap[$sale['ar_id']].'<br/>'.date('d-m-Y',strtotime($sale['entry_date'])).'<br/>'.$productDetailsMap[$sale['product']]['name'].' '.$sale['qty'].' bags';?>
+						echo $clientNamesMap[$sale['client']].'<br/>'.date('d-m-Y',strtotime($sale['date'])).'<br/>'.$productDetailsMap[$sale['product']]['name'].' '.$sale['qty'].' bags';?>
 					</p>
 					Unlocked By : <?php echo $userMap[$unlocked['unlocked_by']];?>
 					<div class="dimmer"></div>

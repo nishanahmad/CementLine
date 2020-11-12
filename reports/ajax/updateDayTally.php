@@ -3,7 +3,7 @@
 	session_start();
 	if(!empty($_POST['ar']) && !empty($_POST['date']))
 	{
-		$arObjects = mysqli_query($con, "SELECT * FROM ar_details order by name ASC" ) or die(mysqli_error($con));	
+		$arObjects = mysqli_query($con, "SELECT * FROM clients order by name ASC" ) or die(mysqli_error($con));	
 		foreach($arObjects as $ar)
 			$arNameMap[$ar['id']] = $ar['name'];
 		

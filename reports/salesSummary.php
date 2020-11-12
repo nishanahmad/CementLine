@@ -96,7 +96,7 @@ if(isset($_SESSION["user_name"]))
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.widgets.min.js"></script>
 			<script>
-			$(function() {
+			$(document).ready(function() {
 				var pickerOpts = { dateFormat:"dd-mm-yy"}; 
 				$( "#fromDate" ).datepicker(pickerOpts);
 				
@@ -243,7 +243,7 @@ if(isset($_SESSION["user_name"]))
 							}
 						}
 					});	  
-				}
+				 }
 			</script>
 		</body>	
 	</html>																																											<?php

@@ -3,7 +3,7 @@ function updateUserDetails($oldSale,$newSale)
 {
 	require '../connect.php';
 
-	$products = mysqli_query($con,"SELECT id,name FROM products WHERE status = 1 ORDER BY id ASC");
+	$products = mysqli_query($con,"SELECT id,name FROM products WHERE isActive = 1 ORDER BY id ASC");
 	foreach($products as $product)
 	{
 		$productMap[$product['id']] = $product['name'];
@@ -23,10 +23,10 @@ function updateUserDetails($oldSale,$newSale)
 	
 	$unlocked = false;
 	
-	if($oldSale['entry_date'] != $newSale['entry_date'])
+	if($oldSale['date'] != $newSale['date'])
 	{
-		$oldValue = date('d-m-Y',strtotime($oldSale['entry_date']));
-		$newValue = date('d-m-Y',strtotime($newSale['entry_date']));
+		$oldValue = date('d-m-Y',strtotime($oldSale['date']));
+		$newValue = date('d-m-Y',strtotime($newSale['date']));
 		
 		$sql="INSERT INTO sale_edits (sale_id, edited_on, edited_by, field, old_value, new_value)
 			 VALUES
@@ -35,28 +35,16 @@ function updateUserDetails($oldSale,$newSale)
 		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));
 		$unlocked = true;		
 	}
-	if($oldSale['ar_id'] != $newSale['ar_id'])
+	if($oldSale['client'] != $newSale['client'])
 	{
-		$oldValue = $arMap[$oldSale['ar_id']];
-		$newValue = $arMap[$newSale['ar_id']];
+		$oldValue = $arMap[$oldSale['client']];
+		$newValue = $arMap[$newSale['client']];
 		
 		$sql="INSERT INTO sale_edits (sale_id, edited_on, edited_by, field, old_value, new_value)
 			 VALUES
-			 ($id, '$dateTime', '$user', 'AR', '$oldValue', '$newValue')";
+			 ($id, '$dateTime', '$user', 'Client', '$oldValue', '$newValue')";
 
 		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));	
-		$unlocked = true;		
-	}	
-	if($oldSale['eng_id'] != $newSale['eng_id'])
-	{
-		$oldValue = $arMap[$oldSale['eng_id']];
-		$newValue = $arMap[$newSale['eng_id']];
-		
-		$sql="INSERT INTO sale_edits (sale_id, edited_on, edited_by, field, old_value, new_value)
-			 VALUES
-			 ($id, '$dateTime', '$user', 'Engineer', '$oldValue', '$newValue')";
-
-		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));
 		$unlocked = true;		
 	}	
 	if($oldSale['truck_no'] != $newSale['truck_no'])
@@ -95,18 +83,6 @@ function updateUserDetails($oldSale,$newSale)
 		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));
 		$unlocked = true;		
 	}		
-	if($oldSale['return_bag'] != $newSale['return_bag'])
-	{
-		$oldValue = $oldSale['return_bag'];
-		$newValue = $newSale['return_bag'];
-		
-		$sql="INSERT INTO sale_edits (sale_id, edited_on, edited_by, field, old_value, new_value)
-			 VALUES
-			 ($id, '$dateTime', '$user', 'Return', '$oldValue', '$newValue')";
-
-		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));
-		$unlocked = true;		
-	}	
 	if($oldSale['discount'] != $newSale['discount'])
 	{
 		$oldValue = $oldSale['discount'];
@@ -143,18 +119,6 @@ function updateUserDetails($oldSale,$newSale)
 		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));
 		$unlocked = true;		
 	}	
-	if($oldSale['truck_no'] != $newSale['truck_no'])
-	{
-		$oldValue = $oldSale['truck_no'];
-		$newValue = $newSale['truck_no'];
-		
-		$sql="INSERT INTO sale_edits (sale_id, edited_on, edited_by, field, old_value, new_value)
-			 VALUES
-			 ($id, '$dateTime', '$user', 'Truck', '$oldValue', '$newValue')";
-
-		$insert = mysqli_query($con, $sql) or die(mysqli_error($con));
-		$unlocked = true;		
-	}		
 	if($oldSale['order_no'] != $newSale['order_no'])
 	{
 		$oldValue = $oldSale['order_no'];

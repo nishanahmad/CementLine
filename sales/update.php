@@ -45,7 +45,7 @@ if(isset($_SESSION["user_name"]))
 		$resultNew = mysqli_query($con,"SELECT * FROM sales WHERE id='$id'") or die(mysqli_error($con));	
 		$newSale= mysqli_fetch_array($resultNew,MYSQLI_ASSOC);					
 
-		//updateUserDetails($oldSale,$newSale);
+		updateUserDetails($oldSale,$newSale);
 		
 		$url = 'list.php?success&sql='.$sql.'&range='.$range;
 		header( "Location: $url" );

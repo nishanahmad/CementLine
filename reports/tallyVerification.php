@@ -12,14 +12,14 @@ if(isset($_SESSION["user_name"]))
 	$productMap = getProductDetails($con);
 	$rateMap = getRateMap();
 	$cdMap = getCDMap();
-	$wdMap = getWDMap();	
+	$wdMap = getWDMap();
+	$wdMap = getSDMap();
 
 
-	$arObjects = mysqli_query($con, "SELECT * FROM ar_details ORDER BY name ASC" ) or die(mysqli_error($con));	
+	$arObjects = mysqli_query($con, "SELECT * FROM clients ORDER BY name ASC" ) or die(mysqli_error($con));	
 	foreach($arObjects as $ar)
 	{
 		$arMap[$ar['id']]['name'] = $ar['name']; 
-		$arMap[$ar['id']]['type'] = $ar['type']; 
 	}
 				
 	function getVerificationStatus($saleId,$con) 
@@ -45,7 +45,7 @@ if(isset($_SESSION["user_name"]))
 	foreach($userObjects as $user)
 		$userMap[$user['user_id']] = $user['user_name'];
 		
-	$salesList = mysqli_query($con, "SELECT * FROM nas_sale WHERE entry_date = '$date' ORDER BY bill_no ASC" ) or die(mysqli_error($con));
+	$salesList = mysqli_query($con, "SELECT * FROM sales WHERE date = '$date' ORDER BY bill_no ASC" ) or die(mysqli_error($con));
 	
 	if(isset($_POST['date']))
 	{
@@ -65,12 +65,10 @@ if(isset($_SESSION["user_name"]))
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.widgets.min.js"></script>	
 	<script>
-	$(function() {
+	$(document).ready(function() {
 		var pickerOpts = { dateFormat:"dd-mm-yy"}; 
 		$( "#date" ).datepicker(pickerOpts);
-	});
 	
-	$(document).ready(function() {
 		$(".maintable").tablesorter(); 
 		var $table = $('.maintable');
 	});		
@@ -118,13 +116,13 @@ if(isset($_SESSION["user_name"]))
 	</div>
 </form>
 <br>
-<table class="maintable table table-hover table-bordered" style="width:60%;margin-left:40px;">
+<table class="maintable table table-hover table-bordered" style="width:70%;margin-left:40px;">
 <thead style="position: sticky;top: 0">
 	<tr class="table-success">
-		<th style="text-align:left;" class="header" scope="col"><i class="far fa-file-alt"></i> Bill</th>
-		<th style="text-align:left;" class="header" scope="col"><i class="fa fa-map-o"></i> AR</th>
+		<th style="text-align:left;min-width:120px;" class="header" scope="col"><i class="far fa-file-alt"></i> Bill</th>
+		<th style="text-align:left;" class="header" scope="col"><i class="fa fa-map-o"></i> Client</th>
 		<th style="text-align:left;" class="header" scope="col"><i class="fa fa-address-card-o"></i> Customer</th>	
-		<th style="width:100px;text-align:left;" class="header" scope="col"><i class="fa fa-shield"></i> Product</th>	
+		<th style=";text-align:left;min-width:180px;" class="header" scope="col"><i class="fa fa-shield"></i> Product</th>	
 		<th style="width:70px;text-align:center" class="header" scope="col"><i class="fab fa-buffer"></i> Qty</th>
 		<th style="width:12%;text-align:center" class="header" scope="col"><i class="fa fa-rupee-sign"></i> Approx.</th>
 		<th class="header" scope="col">VerifiedBy</th>
@@ -134,7 +132,7 @@ if(isset($_SESSION["user_name"]))
 			
 	foreach($salesList as $sale)
 	{
-		$date = $productDateMap[$sale['product']][closestDate($productDateMap[$sale['product']],strtotime($sale['entry_date']))];
+		$date = $productDateMap[$sale['product']][closestDate($productDateMap[$sale['product']],strtotime($sale['date']))];
 		$date = date('Y-m-d',$date);
 		
 		if(isset($rateMap[$sale['product']][$date]))
@@ -142,33 +140,38 @@ if(isset($_SESSION["user_name"]))
 		else
 			$rate = 0;
 		
-		if(isset($cdMap[$sale['product']][$sale['ar_id']][$sale['entry_date']]))
-			$cd = $cdMap[$sale['product']][$sale['ar_id']][$sale['entry_date']];
+		if(isset($cdMap[$sale['product']][$sale['client']][$sale['date']]))
+			$cd = $cdMap[$sale['product']][$sale['client']][$sale['date']];
 		else
 			$cd = 0;
 		
-		if(isset($wdMap[$sale['product']][$sale['entry_date']]))
-			$wd = $wdMap[$sale['product']][$sale['entry_date']];
+		if(isset($sdMap[$sale['product']][$sale['client']][$sale['date']]))
+			$sd = $sdMap[$sale['product']][$sale['client']][$sale['date']];
+		else
+			$sd = 0;
+		
+		if(isset($wdMap[$sale['product']][$sale['date']]))
+			$wd = $wdMap[$sale['product']][$sale['date']];
 		else
 			$wd = 0;
 		
 		$finalRate = $rate - $cd - $wd - $sale['discount'];																					?>		
 		
-		<tr id="<?php echo $sale['sales_id'];?>">
+		<tr id="<?php echo $sale['id'];?>">
 			<td><?php echo $sale['bill_no'];?></td>
-			<td><?php echo $arMap[$sale['ar_id']]['name'];?></td>
+			<td><?php echo $arMap[$sale['client']]['name'];?></td>
 			<td><?php echo $sale['customer_name'];?></td>
 			<td><?php echo $productMap[$sale['product']]['name'];?></td>
-			<td style="text-align:center"><b><?php echo $sale['qty'] - $sale['return_bag'];?></b></td>
-			<td><?php echo $finalRate * ($sale['qty'] - $sale['return_bag']) - $sale['order_no'] .'/-';?></td>																													<?php
-			if(getVerificationStatus($sale['sales_id'],$con) !== null)
+			<td style="text-align:center"><b><?php echo $sale['qty'];?></b></td>
+			<td><?php echo $finalRate * $sale['qty'] - $sale['order_no'] .'/-';?></td>																													<?php
+			if(getVerificationStatus($sale['id'],$con) !== null)
 			{		
-				$userId = getVerificationStatus($sale['sales_id'],$con);																																?>
+				$userId = getVerificationStatus($sale['id'],$con);																																?>
 				<td><font style="font-weight:bold;font-style:italic;"><?php echo $userMap[$userId];?></font></td>																	<?php
 			}
 			else
 			{																																										?>
-				<td><button class="btn" value="<?php echo $sale['sales_id'];?>" style="background-color:#E6717C;color:white;" onclick="callAjax(this.value)">Verify</button></td>																											<?php			
+				<td><button class="btn" value="<?php echo $sale['id'];?>" style="background-color:#E6717C;color:white;" onclick="callAjax(this.value)">Verify</button></td>																											<?php			
 			}																																										?>
 		</tr>																																										<?php	
 	}																																												?>	
