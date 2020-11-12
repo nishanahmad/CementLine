@@ -18,6 +18,7 @@ function getSales($con,$sql)
 		$saleArray['qty'] = $sale['qty'];
 		$saleArray['discount'] = $sale['discount'];
 		$saleArray['bill'] = $sale['bill_no'];
+		$saleArray['order_no'] = $sale['order_no'];
 		$saleArray['truck'] = $sale['truck_no'];
 		$saleArray['name'] = $sale['customer_name'];
 		$saleArray['phone'] = $sale['customer_phone'];
