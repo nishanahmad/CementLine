@@ -22,7 +22,18 @@
 		}
 
 		if($result)
+		{
+			$checkForwardquery = mysqli_query($con, "SELECT * FROM tally_check_forwards WHERE sale = '$saleId' AND status = 1 ");			
+			if(mysqli_num_rows($checkForwardquery) > 0)
+			{
+				$updateForward ="UPDATE tally_check_forwards SET status = 0 WHERE sale = '$saleId'";
+				$forward = mysqli_query($con, $updateForward);				
+			}			
+			
 			echo $saleId;
+		}
 		else
+		{
 			echo false;	
+		}
 	}

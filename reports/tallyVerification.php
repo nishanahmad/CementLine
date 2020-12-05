@@ -5,6 +5,7 @@ if(isset($_SESSION["user_name"]))
 	require '../connect.php';
 	require '../sales/listHelper.php';
 	require '../navbar.php';
+	require 'forwardModal.php';
   
 	if(isset($_GET['date']))
 		$date = date("Y-m-d", strtotime($_GET['date']));		
@@ -36,6 +37,21 @@ if(isset($_SESSION["user_name"]))
 		else
 			return null;
 	}
+	
+	function getForwardStatus($saleId,$con)
+	{
+		$result = mysqli_query($con, "SELECT * FROM tally_check_forwards WHERE sale = '$saleId'") or die(mysqli_error($con));	
+		if(mysqli_num_rows($result) > 0)
+		{
+			$forward = mysqli_fetch_array($result, MYSQLI_ASSOC);
+			if($forward['status'])
+				return $forward['forwarded_by'];
+			else
+				return null;
+		}
+		else
+			return null;
+	}	
 
 	$productDates = mysqli_query($con, "SELECT * FROM rate ORDER BY date") or die(mysqli_error($con));				 	 
 	foreach($productDates as $rate)
@@ -64,16 +80,6 @@ if(isset($_SESSION["user_name"]))
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.widgets.min.js"></script>	
-	<script>
-	$(document).ready(function() {
-		var pickerOpts = { dateFormat:"dd-mm-yy"}; 
-		$( "#date" ).datepicker(pickerOpts);
-	
-		$(".maintable").tablesorter(); 
-		var $table = $('.maintable');
-	});		
-
-	</script>	
     <style> 
         .header { 
             position: sticky; 
@@ -84,6 +90,11 @@ if(isset($_SESSION["user_name"]))
 			font-style:italic;
 			color:LimeGreen			
 		}
+		.red{
+			font-weight:bold;
+			font-style:italic;
+			color:red			
+		}			
 	</style> 
 	
 </head>
@@ -116,7 +127,7 @@ if(isset($_SESSION["user_name"]))
 	</div>
 </form>
 <br>
-<table class="maintable table table-hover table-bordered" style="width:70%;margin-left:40px;">
+<table class="maintable table table-hover table-bordered" style="width:75%;margin-left:40px;">
 <thead style="position: sticky;top: 0">
 	<tr class="table-success">
 		<th style="text-align:left;min-width:120px;" class="header" scope="col"><i class="far fa-file-alt"></i> Bill</th>
@@ -124,8 +135,9 @@ if(isset($_SESSION["user_name"]))
 		<th style="text-align:left;" class="header" scope="col"><i class="fa fa-address-card-o"></i> Customer</th>	
 		<th style=";text-align:left;min-width:180px;" class="header" scope="col"><i class="fa fa-shield"></i> Product</th>	
 		<th style="width:70px;text-align:center" class="header" scope="col"><i class="fab fa-buffer"></i> Qty</th>
-		<th style="width:12%;text-align:center" class="header" scope="col"><i class="fa fa-rupee-sign"></i> Approx.</th>
+		<th style="width:8%;text-align:center" class="header" scope="col"><i class="fa fa-rupee-sign"></i> Approx.</th>
 		<th class="header" scope="col">VerifiedBy</th>
+		<th class="header" scope="col">ForwardedBy</th>
 	</tr>
 </thead>
 <?php
@@ -171,14 +183,63 @@ if(isset($_SESSION["user_name"]))
 			}
 			else
 			{																																										?>
-				<td><button class="btn" value="<?php echo $sale['id'];?>" style="background-color:#E6717C;color:white;" onclick="callAjax(this.value)">Verify</button></td>																											<?php			
-			}																																										?>
+				<td><button class="btn btn-sm" value="<?php echo $sale['id'];?>" style="background-color:#228B22;color:white;" onclick="callAjax(this.value)"><i class="fas fa-check"></i> Verify</button></td>																											<?php			
+			}
+			if(getForwardStatus($sale['id'],$con) !== null)
+			{		
+				$userId = getForwardStatus($sale['id'],$con);																																?>
+				<td style="text-align:center"><font style="font-weight:bold;font-style:italic;"><?php echo $userMap[$userId];?></font></td>																	<?php
+			}
+			else
+			{																																										?>
+				<td style="text-align:center"><a href="#" class="btn btn-sm forwardRow" role="button" style="background-color:#E6717C;color:white;" data-id="<?php echo $sale['id'];?>" data-toggle="modal" data-target="#forwardModal"><i class="fas fa-arrow-right"></i> Forward</a></td><?php
+			}			
+			?>
 		</tr>																																										<?php	
 	}																																												?>	
 </table>
 <br><br><br><br><br><br>
 </div>
 <script>
+	
+	$(document).ready(function() {
+		$(".maintable").tablesorter(); 
+		var $table = $('.maintable');
+		
+		var pickerOpts = { dateFormat:"dd-mm-yy"}; 
+		$( "#date" ).datepicker(pickerOpts);
+
+
+		$('.forwardRow').click(function(){
+			var forwardId = $(this).data('id');
+			$("#forwardIdModal").val(forwardId);
+		});	
+
+		$('#forwardbtn').click(function(){
+			var fId = $( "#forwardIdModal" ).val();
+			var remarks = $( "#remarks" ).val();
+			$.ajax({
+				type: "POST",
+				url: "ajax/forwardVerification.php",
+				data:'forwardId='+fId + '&remarks=' + remarks,
+				success: function(response){
+					if(response != false){
+						$('#'+response).find('td').eq(7).text('Forwarded!');
+						$('#'+response).find('td').eq(7).addClass("red");
+						$("#remarks").val('');
+						$('#forwardModal').hide();
+						$('body').removeClass('modal-open');
+						$('.modal-backdrop').remove();
+					}
+					else{
+						alert('Some error occured !!!');
+						return false;
+					}
+				}
+			});	  
+		});		
+	});
+	
 	function callAjax(saleId){
 		$.ajax({
 			type: "POST",
