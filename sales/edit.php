@@ -60,15 +60,6 @@ if(isset($_SESSION["user_name"]))
 			var shopName_array = JSON.parse(shopNameList);
 			var shopNameArray = shopName_array;
 		</script>
-		<style>
-			#content-desktop {display: block;}
-			#content-mobile {display: none;}
-
-			@media screen and (max-width: 768px) {
-			  #content-desktop {display: none;}
-			  #content-mobile {display: block;}
-			}		
-		</style>
 	</head>
 	<body>
 		<nav class="navbar navbar-light bg-light sticky-top bottom-nav">

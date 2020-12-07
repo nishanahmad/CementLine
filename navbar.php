@@ -245,7 +245,6 @@ a {
 		  Reports
 		</a>
 	  </li>	  	  		
-	  </li>
 	</ul>
 	<div class="float-right" style="margin-right:50px;">	
 		<ul class="navbar-nav mr-auto">
