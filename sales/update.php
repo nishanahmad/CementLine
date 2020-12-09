@@ -5,8 +5,8 @@ session_start();
 if(isset($_SESSION["user_name"]))
 {
 	require '../connect.php';
-	//require '../functions/sms.php';
 	require 'updateUserDetails.php';
+	require 'billUpdatedCheck.php';
 	if(count($_POST)>0) 
 	{	
 
@@ -30,6 +30,7 @@ if(isset($_SESSION["user_name"]))
 		$entered_on = date('Y-m-d H:i:s');
 		$sql = $_POST['sql'];
 		$range = $_POST['range'];
+		$total = $_POST['total'];
 			
 
 		if(empty($discount))
@@ -47,7 +48,11 @@ if(isset($_SESSION["user_name"]))
 
 		updateUserDetails($oldSale,$newSale);
 		
-		$url = 'list.php?success&sql='.$sql.'&range='.$range;
+		if(billUpdatedCheck($oldSale,$newSale,$con))
+			$url = 'list.php?success&sql='.$sql.'&range='.$range.'&total='.$total;
+		else
+			$url = 'list.php?success&sql='.$sql.'&range='.$range;		
+
 		header( "Location: $url" );
 	}																							
 }

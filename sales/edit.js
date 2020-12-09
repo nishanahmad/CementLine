@@ -194,7 +194,7 @@ $(document).ready(function()
 			}
 		});		
 	});	
-	$("#bd").change(function(){
+	$("#bd,#order_no,#qty").change(function(){
 		refreshRate();
 	});	
 
@@ -328,6 +328,12 @@ function refreshRate()
 	var sd=document.getElementById("sd").value;
 	var wd=document.getElementById("wd").value;
 	var bd=document.getElementById("bd").value;
+	var qty=document.getElementById("qty").value;
+	var order_no=document.getElementById("order_no").value;	
 	
-	$('#final').val(rate-cd-sd-wd-bd);
+	var finalRate = rate-cd-wd-bd;
+	var totalAmount = (finalRate * qty) - order_no;
+	
+	$('#final').val(finalRate);
+	$('#total').val(totalAmount);
 }

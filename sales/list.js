@@ -2,6 +2,18 @@ let rateMap = new Map();
 let discountMap = new Map();
 
 $(function(){
+
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	var totalAmount = urlParams.get('total');
+	if(totalAmount)
+	{
+		$("#totalAmount").text(totalAmount);
+		var totalModal = new bootstrap.Modal(document.getElementById('totalModal'), {keyboard: false});
+		totalModal.show();
+		setTimeout(function() {totalModal.hide()}, 5000);		
+	}
+	
 	$('#client,#client-filter,#eng-filter').select2();
 	
 	var pickeropts = { dateFormat:"dd-mm-yy"}; 

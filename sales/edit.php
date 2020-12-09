@@ -16,17 +16,17 @@ if(isset($_SESSION["user_name"]))
 	$urlsql = $_GET['sql'];
 	$urlrange = $_GET['range'];
 	
-	$products = mysqli_query($con,"SELECT id,name FROM products WHERE isActive = 1 ORDER BY id ASC") or die(mysqli_error($con));	
-	$arObjects = mysqli_query($con,"SELECT id,name,shop FROM clients ORDER BY name") or die(mysqli_error($con));	
+	$products = mysqli_query($con,"SELECT id,name FROM products WHERE isActive = 1 ORDER BY id ASC") or die(mysqli_error($con));
+	$arObjects = mysqli_query($con,"SELECT id,name,shop FROM clients ORDER BY name") or die(mysqli_error($con));
 	foreach($arObjects as $ar)
 	{
-		$arMap[$ar['id']] = $ar['name']; 		
-		$shopName = strip_tags($ar['shop']); 
+		$arMap[$ar['id']] = $ar['name'];
+		$shopName = strip_tags($ar['shop']);
 		$shopNameMap[$ar['id']] = $shopName;
 
 		$shopNameArray = json_encode($shopNameMap);
 		$shopNameArray = str_replace('\n',' ',$shopNameArray);
-		$shopNameArray = str_replace('\r',' ',$shopNameArray);		
+		$shopNameArray = str_replace('\r',' ',$shopNameArray);
 	}
 	$result = mysqli_query($con,"SELECT * FROM sales WHERE id='" . $_GET["id"] . "'") or die(mysqli_error($con));
 	$row= mysqli_fetch_array($result,MYSQLI_ASSOC);
@@ -198,6 +198,14 @@ if(isset($_SESSION["user_name"]))
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col col-md-4 offset-1">
+									<div class="input-group">
+										<span class="input-group-text col-md-5"><i class="fas fa-money-check-alt"></i>&nbsp;Total</span>
+										<input readonly class="form-control" name="total" id="total">
+									</div>
+								</div>								
+							</div>														
 							<p id="displayError" style="color:red;"></p>
 							<br/>
 							<button id="updatebtn" class="btn" style="width:100px;font-size:18px;background-color:#f2cf5b;color:white;"><i class="fa fa-save"></i> Save</button>
