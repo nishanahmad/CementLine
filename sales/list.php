@@ -58,8 +58,6 @@ if(isset($_SESSION["user_name"]))
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="../css/styles.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" media="screen and (max-device-width: 768px)" href="../css/neomorphism.css"/>
-		<link href="../css/navbarMobile.css" media="screen and (max-device-width: 768px)" rel="stylesheet" type="text/css">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css">
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
@@ -213,8 +211,21 @@ if(isset($_SESSION["user_name"]))
 			</div>
 
 			<div id="content-mobile">
-				<div class="container">
-					<div class="app-container"><?php
+				<br/><br/>
+				<table class="maintable table table-hover table-bordered table-sm" style="width:95%;margin-left:2%;">
+					<thead>
+						<tr class="table-success">
+							<th style="min-width:110px;"><i class="far fa-calendar-alt"></i> Date</th>
+							<th><i class="fa fa-address-card-o"></i> AR</th>
+							<th style="width:70px;"><i class="fa fa-shield"></i> PRO</th>
+							<th style="width:70px;"><i class="fab fa-buffer"></i> QTY</th>
+							<th style="width:70px;"><i class="fa fa-rupee-sign"></i> RATE</th>
+							<th style="width:120px;"><i class="far fa-file-alt"></i> BILL NO</th>
+							<th style="width:95px;"><i class="fas fa-truck-moving"></i> TRUCK</th>
+							<th style="width:180px;"><i class="far fa-user"></i> CUSTOMER</th>
+						</tr>	
+					</thead>
+					<tbody>	<?php
 						foreach($mainMap as $index => $sale) 
 						{
 							$date = $productDateMap[$sale['product']][closestDate($productDateMap[$sale['product']],strtotime($sale['date']))];
@@ -230,30 +241,27 @@ if(isset($_SESSION["user_name"]))
 							else
 								$cd = 0;
 							
-							if(isset($wdMap[$sale['product']][$sale['date']]))
+							if(isset($wdMap[$sale['product']][$sale['date']]) && $clientTypeMap[$sale['client']] == 'AR/SR')
 								$wd = $wdMap[$sale['product']][$sale['date']];
 							else
 								$wd = 0;
 							
 							$finalRate = $rate - $cd - $wd - $sale['discount'];																					?>	
 							
-							<div class="app-content">
-								<button class="button button-large">
-									<div class="subtle">
-										<font style="color:#077dfe;">&nbsp;<?php echo $clientNamesMap[$sale['client']]; ?></font><br/>
-										<span id="line"></span>
-										<i class="far fa-calendar-alt"></i>&nbsp;<?php echo date('d-m-Y',strtotime($sale['date'])); ?><br/>										
-										<font style="color:<?php echo $productDetailsMap[$sale['product']]['colorcode'];?>"><i class="fa fa-shield"></i>&nbsp;<?php echo $productDetailsMap[$sale['product']]['name'];?></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@&nbsp;&nbsp;<i class="fa fa-rupee-sign"></i><?php if($finalRate > 0 ) echo $finalRate.'/-';?><br/>
-										<i class="fab fa-buffer"></i>&nbsp;<?php echo $sale['qty']; ?><br/>
-										<i class="fas fa-house-user"></i>&nbsp;<?php echo $sale['name']; ?><div class="button button-small saleId" data-id="<?php echo $sale['id'];?>" data-params="<?php echo explode('?',$_SERVER['REQUEST_URI'])[1];?>" style="float:right;margin-right:2%;"><i class="fas fa-chevron-right"></i></div><br/>
-									</div>
-								</button>
-								<br/>
-							</div>																															<?php
-						}																																	?>
-					</div>
-				</div>
-			</div>			
+							<tr data-id="<?php echo $sale['id'];?>" data-params="<?php echo explode('?',$_SERVER['REQUEST_URI'])[1];?>" class="saleId" style="cursor:pointer;">
+								<td><?php echo date('d-m-Y',strtotime($sale['date'])); ?></td>
+								<td><?php echo $clientNamesMap[$sale['client']]; ?></td>
+								<td><?php echo $productDetailsMap[$sale['product']]['name'];?></td>
+								<td><?php echo $sale['qty']; ?></td>
+								<td><?php if($finalRate > 0 ) echo $finalRate.'/-';?></td>							
+								<td><?php echo $sale['bill']; ?></td>
+								<td><?php if(isset($truckNumbersMap[$sale['truck']])) echo $truckNumbersMap[$sale['truck']]; ?></td>
+								<td><?php echo $sale['name'].'<br/><font>'.$sale['phone'].'</font>'; ?></td>
+							</tr>																																		<?php				
+						}																																				?>
+					</tbody>	
+				</table>
+			</div>				
 			<br/><br/><br/>
 		</div>
 		<script src="list.js"></script>
